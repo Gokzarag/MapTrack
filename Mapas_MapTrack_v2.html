@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa Clientes - MapTrack V2.1</title>
+  <title>Mapas - MapTrack v2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -30,6 +30,19 @@
       color: #555;
       font-weight: bold;
     }
+    .filtros-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 3px;
+    }
+    label, select {
+      font-size:0.98em;
+    }
+    h2 {
+      font-size: 1.3em;
+    }
     #map {
       height: 550px;
       width: 98%;
@@ -39,11 +52,19 @@
       box-shadow: 2px 2px 18px #e5e9f3c7;
       margin-top: 12px;
     }
-    label, select {
-      font-size:0.98em;
+    @media (max-width: 600px) {
+      .filtros-row {
+        gap: 8px;
+      }
+      .header-row h2 {
+        font-size:1.07em;
+      }
     }
-    h2 {
-      font-size: 1.3em;
+    .nombre-link {
+      word-break: break-all;
+      font-weight: bold;
+      text-decoration: underline;
+      display:inline-block;
     }
   </style>
 </head>
@@ -52,10 +73,13 @@
     <img src="https://drive.google.com/thumbnail?id=11yaeiYnsBYXFX46VNs_5ARJ_E8fDBHzw" alt="Logo" />
     <h2>Mapa de Clientes - MapTrack V2.1</h2>
   </div>
-  <label for="placa">Placa:</label>
-  <select id="placa"></select>
-  <label for="cliente">Cliente:</label>
-  <select id="cliente"></select>
+
+  <div class="filtros-row">
+    <label for="placa">Placa:</label>
+    <select id="placa"></select>
+    <label for="cliente">Cliente:</label>
+    <select id="cliente"></select>
+  </div>
   <div class="fecha-entrega" id="fechaEntrega"></div>
   <div id="map"></div>
   <script>
@@ -70,6 +94,48 @@
     const COL_LAT = 'Latitude';
     const COL_LNG = 'Longitude';
     const COL_FECHA = 'Fecha de Entrega';
+
+    // Convierte fechas 'm/d/yyyy' o 'd/m/yyyy' o 'yyyy-m-d' a 'dd/mm/yyyy'
+    function toDDMMYYYY(fechaStr) {
+      // Soporta varias variantes (d/m/aaaa, m/d/aaaa, aaaa-mm-dd, etc)
+      if (!fechaStr) return '';
+      // Si es yyyy-mm-dd
+      if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
+        let [a,m,d] = fechaStr.trim().split('-');
+        return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
+      }
+      // Si es m/d/yyyy o d/m/yyyy
+      let sep = fechaStr.includes('/') ? '/' : '-';
+      let [p1, p2, p3] = fechaStr.trim().split(sep);
+      if (p3 && p3.length === 4) {
+        // asume p1=mes o día, p2=mes o día, p3=año
+        let d = parseInt(p1, 10), m = parseInt(p2, 10), y = parseInt(p3, 10);
+        if (m>12) { [d,m]=[m,d]; } // Corrige si formato era d/m/yyyy (p1>12)
+        return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;
+      }
+      return fechaStr;
+    }
+
+    function getColorForString(str, total) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const hue = Math.abs(hash) % total;
+      return `hsl(${Math.round(hue * (360 / total))},75%,49%)`;
+    }
+
+    function makeCustomMarker(color) {
+      const svg = encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="29" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}"/></svg>`
+      );
+      return L.icon({
+        iconUrl: "data:image/svg+xml," + svg,
+        iconSize: [20, 29],
+        iconAnchor: [10, 29],
+        popupAnchor: [0, -25]
+      });
+    }
 
     let rawData = [];
     let map, markers = [];
@@ -87,10 +153,9 @@
 
     function createMap(latDefault = -12.1, lngDefault = -77.0) {
       map = L.map('map').setView([latDefault, lngDefault], 12);
-      // CartoDB Positron (tipo Google Maps)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://carto.com/" target="_blank">CartoDB</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        attribution: '&copy; <a href="https://carto.com/">CartoDB</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
     }
 
@@ -98,6 +163,12 @@
       if (markers.length > 0) for (const m of markers) map.removeLayer(m);
       markers = [];
       if (data.length === 0) return;
+      const clientesUnique = [...new Set(data.map(row => row[COL_NOMBRE_CLIENTE]))];
+      const colorMap = {};
+      clientesUnique.forEach((cliente, i) => {
+        colorMap[cliente] = getColorForString(cliente, clientesUnique.length+2);
+      });
+
       let any = false;
       for (const row of data) {
         const lat = parseFloat(row[COL_LAT]);
@@ -108,18 +179,23 @@
         if (comentario && !['', 'error', '(blank)', '(blanco)', ' '].includes((comentario||"").trim().toLowerCase())) {
           clienteLabel += ` (${comentario})`;
         }
-        const linea2 = `${row[COL_ADDRESS]} - ${row[COL_CITY]}`;
+        const direccion = `${row[COL_ADDRESS]} - ${row[COL_CITY]}`;
         const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
-        // Todo el contenido es un enlace
-        const tooltip = `
+        // Solo el nombre está linkeado
+        const popup = `
           <div style="font-size:1em;">
-            <a href="${gmaps}" target="_blank" style="color:#2566a8;text-decoration:underline;">
-              <span style="font-weight:bold;">${clienteLabel}</span><br>
-              <span>${linea2}</span>
-            </a>
+            <a class="nombre-link" href="${gmaps}" target="_blank"
+               style="color:${colorMap[row[COL_NOMBRE_CLIENTE]]};text-decoration:underline;font-weight:bold;">
+              ${clienteLabel}
+            </a><br>
+            <span>${direccion}</span>
           </div>
         `;
-        const marker = L.marker([lat, lng]).bindTooltip(tooltip, { direction: 'top', sticky: true, opacity:0.97 });
+        const marker = L.marker([lat, lng], { icon: makeCustomMarker(colorMap[row[COL_NOMBRE_CLIENTE]]) });
+        marker.bindPopup(popup, {maxWidth: 300});
+        marker.on('click', function(e) {
+           marker.openPopup();
+        });
         marker.addTo(map);
         markers.push(marker);
         if (!any) {
@@ -147,7 +223,8 @@
       plotMarkers(data);
       let fecha = '';
       if (data.length > 0) fecha = data[0][COL_FECHA];
-      document.getElementById('fechaEntrega').textContent = fecha ? ('Fecha de entrega: ' + fecha) : '';
+      let fechaDDMMYYYY = fecha ? toDDMMYYYY(fecha) : '';
+      document.getElementById('fechaEntrega').textContent = fechaDDMMYYYY ? ('Fecha de entrega: ' + fechaDDMMYYYY) : '';
     }
 
     Papa.parse(csv_url, {
@@ -165,8 +242,8 @@
         sel.innerHTML = placas.map((p, i) => `<option value="${p}"${i===0?' selected':''}>${p}</option>`).join('');
         filtrarComboClientes(placas[0]);
         if (rawData.length > 0) {
-          let fechaTexto = rawData[COL_FECHA] ? ('Fecha de entrega: ' + rawData[COL_FECHA]) : '';
-          document.getElementById('fechaEntrega').textContent = fechaTexto;
+          let fechaTexto = rawData[COL_FECHA] ? toDDMMYYYY(rawData[COL_FECHA]) : '';
+          document.getElementById('fechaEntrega').textContent = fechaTexto ? ('Fecha de entrega: ' + fechaTexto) : '';
         }
         if (firstLoad) {
           createMap();
