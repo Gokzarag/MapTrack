@@ -1,70 +1,207 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Mapas - MapTrack v2.0</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet" />
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       max-width: 950px;
       margin: 0 auto;
-      background: #fafcff;
+      background: #f7faff;
+      color: #23272f;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
+
     .header-row {
       display: flex;
       align-items: center;
-      gap: 15px;
-      margin: 20px 0 10px 0;
+      gap: 16px;
+      padding: 32px 0 18px 0;
+      background: #ffffffcc;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px #b2cfff4d;
+      margin-top: 32px;
+      margin-bottom: 22px;
+      justify-content: flex-start;
     }
+
     .header-row img {
-      height: 38px;
+      height: 46px;
+      filter: drop-shadow(0 2px 8px #68a9ff44);
     }
-    .fecha-entrega {
-      margin-top: 10px;
-      font-size: 0.97em;
-      color: #555;
-      font-weight: bold;
+
+    .header-row h2 {
+      letter-spacing: 0.01em;
+      font-size: 1.55em;
+      color: #006af6;
+      background: linear-gradient(90deg, #41d8fc 20%, #3561db 80%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .filtros-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 3px;
+      gap: 17px;
+      background: #f3f8ffea;
+      border-radius: 13px;
+      padding: 13px 19px;
+      box-shadow: 0 2px 8px #d3e3ff60;
+      margin-bottom: 10px;
+      margin-top: 10px;
     }
-    label, select {
-      font-size:0.98em;
+
+    label {
+      font-size: 1.01em;
+      color: #004486;
+      font-weight: 500;
     }
-    h2 {
-      font-size: 1.3em;
+
+    select {
+      font-size: 1em;
+      padding: 8px 26px 8px 12px;
+      border-radius: 7px;
+      border: none;
+      background: #f5faff;
+      box-shadow: 0 2px 8px #afceff22 inset;
+      color: #283349;
+      transition: box-shadow 0.16s, border 0.16s;
+      margin-left: 2px;
+      margin-right: 14px;
+      appearance: none;
+      cursor: pointer;
+      font-family: inherit;
+      outline: none;
     }
+
+    select:focus {
+      box-shadow: 0 0 0 2px #009aea33, 0 2px 8px #afceff22 inset;
+      border: 1.5px solid #009aea;
+    }
+
+    .fecha-entrega {
+      margin: 17px 0 0 6px;
+      font-size: 1.02em;
+      color: #2563eb;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
     #map {
-      height: 550px;
-      width: 98%;
-      min-width: 320px;
-      min-height: 350px;
-      border-radius:8px;
-      box-shadow: 2px 2px 18px #e5e9f3c7;
-      margin-top: 12px;
+      height: 540px;
+      width: 99%;
+      min-width: 312px;
+      min-height: 330px;
+      margin: 18px auto 0 auto;
+      background: #f5f9ff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px #b6d7ef35, 0 2px 5px #a4aeb833;
+      border: 1.8px solid #e5eefd;
+      transition: box-shadow 0.17s;
     }
-    @media (max-width: 600px) {
-      .filtros-row {
-        gap: 8px;
-      }
-      .header-row h2 {
-        font-size:1.07em;
-      }
-    }
+
     .nombre-link {
       word-break: break-all;
-      font-weight: bold;
-      text-decoration: underline;
-      display:inline-block;
+      font-weight: 700;
+      text-decoration: underline dotted;
+      display: inline-block;
+      color: #3483ff;
+      font-size: 1.05em;
+      transition: color 0.14s;
+    }
+
+    .nombre-link:hover {
+      color: #60e4b0;
+      text-decoration-color: #36e8bd;
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      background: #fafdffec;
+      box-shadow: 0 6px 16px #8ab6fc40;
+      border: 1px solid #cbe6ff;
+    }
+
+    .leaflet-popup-content {
+      font-size: 1.01em;
+      color: #124;
+      font-family: inherit;
+    }
+
+    ::-webkit-scrollbar {
+      height: 13px;
+      width: 10px;
+      background: #f1f3fa;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d1eaff;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b4e1fc;
+    }
+
+    @media (max-width: 700px) {
+      .header-row {
+        flex-direction: row;
+        gap: 13px;
+        margin-top: 8vw;
+        margin-bottom: 2vw;
+        padding: 12px 0 7px 0;
+      }
+
+      .header-row h2 {
+        font-size: 1.13em;
+      }
+
+      .filtros-row {
+        padding: 7px 7vw;
+        font-size: 0.98em;
+        gap: 9px;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      #map {
+        height: 290px;
+        min-width: 99vw;
+        min-height: 220px;
+        border-radius: 8px;
+      }
+
+      .fecha-entrega {
+        font-size: 0.98em;
+        margin-top: 10px;
+      }
+    }
+
+    /* Microinteracciones */
+    select,
+    #map,
+    .filtros-row {
+      transition: box-shadow 0.19s, border 0.19s;
+    }
+
+    select:hover {
+      box-shadow: 0 0 0 2px #d9f3ff;
+    }
+
+    h2,
+    .header-row h2 {
+      transition: background 0.3s, color 0.3s;
     }
   </style>
 </head>
@@ -82,6 +219,7 @@
   </div>
   <div class="fecha-entrega" id="fechaEntrega"></div>
   <div id="map"></div>
+
   <script>
     const csv_url = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
 
@@ -97,20 +235,16 @@
 
     // Convierte fechas 'm/d/yyyy' o 'd/m/yyyy' o 'yyyy-m-d' a 'dd/mm/yyyy'
     function toDDMMYYYY(fechaStr) {
-      // Soporta varias variantes (d/m/aaaa, m/d/aaaa, aaaa-mm-dd, etc)
       if (!fechaStr) return '';
-      // Si es yyyy-mm-dd
       if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
         let [a,m,d] = fechaStr.trim().split('-');
         return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
       }
-      // Si es m/d/yyyy o d/m/yyyy
       let sep = fechaStr.includes('/') ? '/' : '-';
       let [p1, p2, p3] = fechaStr.trim().split(sep);
       if (p3 && p3.length === 4) {
-        // asume p1=mes o día, p2=mes o día, p3=año
         let d = parseInt(p1, 10), m = parseInt(p2, 10), y = parseInt(p3, 10);
-        if (m>12) { [d,m]=[m,d]; } // Corrige si formato era d/m/yyyy (p1>12)
+        if (m>12) { [d,m]=[m,d]; }
         return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;
       }
       return fechaStr;
@@ -181,7 +315,6 @@
         }
         const direccion = `${row[COL_ADDRESS]} - ${row[COL_CITY]}`;
         const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
-        // Solo el nombre está linkeado
         const popup = `
           <div style="font-size:1em;">
             <a class="nombre-link" href="${gmaps}" target="_blank"
@@ -259,7 +392,6 @@
     });
 
     document.getElementById('cliente').addEventListener('change', filtrarYRenderizar);
-
   </script>
 </body>
 </html>
