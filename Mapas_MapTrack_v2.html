@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Mapas - MapTrack v2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Favicon con el logo, debe ser PNG o SVG transparente para mejor resultado -->
+  <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=11yaeiYnsBYXFX46VNs_5ARJ_E8fDBHzw" />
   <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -19,7 +21,6 @@
       min-height: 100vh;
       box-sizing: border-box;
     }
-
     .header-row {
       display: flex;
       align-items: center;
@@ -32,12 +33,17 @@
       margin-bottom: 22px;
       justify-content: flex-start;
     }
-
     .header-row img {
-      height: 46px;
-      filter: drop-shadow(0 2px 8px #68a9ff44);
+      height: 54px;
+      width: 54px;
+      border-radius: 50%;
+      box-shadow: 0 2px 18px #32baff25;
+      object-fit: cover;
+      background: #eaf7ff;
+      border: 2px solid #ccedff;
+      /* Quita el cuadro blanco, marcando fondo circular */
+      display: block;
     }
-
     .header-row h2 {
       letter-spacing: 0.01em;
       font-size: 1.55em;
@@ -47,7 +53,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .filtros-row {
       display: flex;
       flex-wrap: wrap;
@@ -60,13 +65,11 @@
       margin-bottom: 10px;
       margin-top: 10px;
     }
-
     label {
       font-size: 1.01em;
       color: #004486;
       font-weight: 500;
     }
-
     select {
       font-size: 1em;
       padding: 8px 26px 8px 12px;
@@ -83,12 +86,10 @@
       font-family: inherit;
       outline: none;
     }
-
     select:focus {
       box-shadow: 0 0 0 2px #009aea33, 0 2px 8px #afceff22 inset;
       border: 1.5px solid #009aea;
     }
-
     .fecha-entrega {
       margin: 17px 0 0 6px;
       font-size: 1.02em;
@@ -96,7 +97,6 @@
       font-weight: 600;
       letter-spacing: 0.01em;
     }
-
     #map {
       height: 540px;
       width: 99%;
@@ -109,7 +109,6 @@
       border: 1.8px solid #e5eefd;
       transition: box-shadow 0.17s;
     }
-
     .nombre-link {
       word-break: break-all;
       font-weight: 700;
@@ -119,41 +118,34 @@
       font-size: 1.05em;
       transition: color 0.14s;
     }
-
     .nombre-link:hover {
       color: #60e4b0;
       text-decoration-color: #36e8bd;
     }
-
     .leaflet-popup-content-wrapper {
       border-radius: 12px;
       background: #fafdffec;
       box-shadow: 0 6px 16px #8ab6fc40;
       border: 1px solid #cbe6ff;
     }
-
     .leaflet-popup-content {
       font-size: 1.01em;
       color: #124;
       font-family: inherit;
     }
-
     ::-webkit-scrollbar {
       height: 13px;
       width: 10px;
       background: #f1f3fa;
       border-radius: 5px;
     }
-
     ::-webkit-scrollbar-thumb {
       background: #d1eaff;
       border-radius: 5px;
     }
-
     ::-webkit-scrollbar-thumb:hover {
       background: #b4e1fc;
     }
-
     @media (max-width: 700px) {
       .header-row {
         flex-direction: row;
@@ -162,11 +154,9 @@
         margin-bottom: 2vw;
         padding: 12px 0 7px 0;
       }
-
       .header-row h2 {
         font-size: 1.13em;
       }
-
       .filtros-row {
         padding: 7px 7vw;
         font-size: 0.98em;
@@ -174,43 +164,33 @@
         margin-left: 0;
         margin-right: 0;
       }
-
       #map {
         height: 290px;
         min-width: 99vw;
         min-height: 220px;
         border-radius: 8px;
       }
-
       .fecha-entrega {
         font-size: 0.98em;
         margin-top: 10px;
       }
     }
-
-    /* Microinteracciones */
-    select,
-    #map,
-    .filtros-row {
+    select, #map, .filtros-row {
       transition: box-shadow 0.19s, border 0.19s;
     }
-
     select:hover {
       box-shadow: 0 0 0 2px #d9f3ff;
     }
-
-    h2,
-    .header-row h2 {
+    h2, .header-row h2 {
       transition: background 0.3s, color 0.3s;
     }
   </style>
 </head>
 <body>
   <div class="header-row">
-    <img src="https://drive.google.com/thumbnail?id=11yaeiYnsBYXFX46VNs_5ARJ_E8fDBHzw" alt="Logo" />
+    <img src="https://drive.google.com/thumbnail?id=11yaeiYnsBYXFX46VNs_5ARJ_E8fDBHzw" alt="Logo MapTrack" />
     <h2>Mapas - MapTrack v2.0</h2>
   </div>
-
   <div class="filtros-row">
     <label for="placa">Placa:</label>
     <select id="placa"></select>
@@ -219,10 +199,8 @@
   </div>
   <div class="fecha-entrega" id="fechaEntrega"></div>
   <div id="map"></div>
-
   <script>
     const csv_url = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
-
     const COL_PLACA = 'Vehicle Key/Placa';
     const COL_CODIGO_CLIENTE = 'Customer Account # / Cliente';
     const COL_NOMBRE_CLIENTE = 'Customer Name/Solic';
@@ -232,8 +210,6 @@
     const COL_LAT = 'Latitude';
     const COL_LNG = 'Longitude';
     const COL_FECHA = 'Fecha de Entrega';
-
-    // Convierte fechas 'm/d/yyyy' o 'd/m/yyyy' o 'yyyy-m-d' a 'dd/mm/yyyy'
     function toDDMMYYYY(fechaStr) {
       if (!fechaStr) return '';
       if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
@@ -249,7 +225,6 @@
       }
       return fechaStr;
     }
-
     function getColorForString(str, total) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -258,7 +233,6 @@
       const hue = Math.abs(hash) % total;
       return `hsl(${Math.round(hue * (360 / total))},75%,49%)`;
     }
-
     function makeCustomMarker(color) {
       const svg = encodeURIComponent(
         `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="29" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}"/></svg>`
@@ -270,11 +244,9 @@
         popupAnchor: [0, -25]
       });
     }
-
     let rawData = [];
     let map, markers = [];
     let firstLoad = true;
-
     function uniqueBy(arr, keys) {
       const seen = {};
       return arr.filter(row => {
@@ -284,7 +256,6 @@
         return true;
       });
     }
-
     function createMap(latDefault = -12.1, lngDefault = -77.0) {
       map = L.map('map').setView([latDefault, lngDefault], 12);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -292,7 +263,6 @@
         attribution: '&copy; <a href="https://carto.com/">CartoDB</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
     }
-
     function plotMarkers(data) {
       if (markers.length > 0) for (const m of markers) map.removeLayer(m);
       markers = [];
@@ -302,7 +272,6 @@
       clientesUnique.forEach((cliente, i) => {
         colorMap[cliente] = getColorForString(cliente, clientesUnique.length+2);
       });
-
       let any = false;
       for (const row of data) {
         const lat = parseFloat(row[COL_LAT]);
@@ -337,7 +306,6 @@
         }
       }
     }
-
     function filtrarComboClientes(placa) {
       const clientesSet = new Set();
       rawData.filter(row => row[COL_PLACA] === placa)
@@ -346,7 +314,6 @@
       const sel = document.getElementById('cliente');
       sel.innerHTML = '<option value="">Todos</option>' + clientes.map(c => `<option value="${c}">${c}</option>`).join('');
     }
-
     function filtrarYRenderizar() {
       const placaSel = document.getElementById('placa').value;
       const clienteSel = document.getElementById('cliente').value;
@@ -359,7 +326,6 @@
       let fechaDDMMYYYY = fecha ? toDDMMYYYY(fecha) : '';
       document.getElementById('fechaEntrega').textContent = fechaDDMMYYYY ? ('Fecha de entrega: ' + fechaDDMMYYYY) : '';
     }
-
     Papa.parse(csv_url, {
       download: true,
       header: true,
@@ -385,12 +351,10 @@
         }
       }
     });
-
     document.getElementById('placa').addEventListener('change', function(e) {
       filtrarComboClientes(e.target.value);
       filtrarYRenderizar();
     });
-
     document.getElementById('cliente').addEventListener('change', filtrarYRenderizar);
   </script>
 </body>
