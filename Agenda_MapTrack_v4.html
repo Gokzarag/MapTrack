@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Agenda_Maptrack_v4</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon logotipo -->
+  <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=11yaeiYnsBYXFX46VNs_5ARJ_E8fDBHzw">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     body {
@@ -258,7 +260,11 @@ function loadCSV() {
     skipEmptyLines: true,
     complete: function (results) {
       const rows = results.data;
-      const headers = Object.keys(rows);
+      if (!rows || !rows.length) {
+        alert("No se encontraron filas en el CSV.");
+        return;
+      }
+      const headers = Object.keys(rows[0]);
       const colC = matchCabecera(['Vehicle Key/Placa', 'Placa'], headers);
       const colD = matchCabecera(['Customer Account # / Cliente', 'Cliente', 'Account', 'Cuenta'], headers);
       const colE = matchCabecera(['Customer Name/Solic', 'Solicitante', 'Solic'], headers);
@@ -270,7 +276,7 @@ function loadCSV() {
         colM = headers.find(h => h.toLowerCase().includes('asign'));
       }
       if(!colM){console.warn('Ninguna columna de Asignación encontrada en el CSV');}
-      else {console.log('Usando columna Asignación:', colM);}
+      else {console.log('Columna Asignación detectada:', colM);}
       const telefonoCols = headers.filter(h => {
         const norm = h.toLowerCase().replace(/[\u0300-\u036f]/g, '');
         return /\btel(e?fono)?\b/.test(norm);
@@ -307,6 +313,9 @@ function loadCSV() {
           Pedido: safeField(row, [colH]),
         };
       }));
+      // Ayuda de depuración
+      console.log("Cabeceras detectadas:", {colC, colD, colE, colF, colG, colM, telefonoCols, colP, colO, colH, colA, colQ, colR});
+      if (dataRows.length > 0) console.log("Ejemplo de fila procesada:", dataRows[0]);
       mostrarFechaEntrega(dataRows);
       renderTable();
     }
