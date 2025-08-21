@@ -224,12 +224,21 @@ function toDDMMYYYY(fechaStr) {
   return fechaStr;
 }
 
-function matchCabecera(posibles, headers) {
-  const norm = s => s.toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9#]/g, '');
+function matchCabecera(posibles, headers, forceContains) {
+  const norm = s => s.toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+  // 1ro: intentamos por lista posible exacta
   for (let pos of posibles) {
     let npos = norm(pos);
     for (let h of headers) {
       if (norm(h) === npos) return h;
+    }
+  }
+  // 2do: si forceContains, cualquier columna que contenga el texto listado
+  if(forceContains && posibles.length) {
+    let must = norm(posibles[0]).replace(/[^a-z]/g,'');
+    for (let h of headers) {
+      let nh = norm(h).replace(/[^a-z]/g,'');
+      if(nh.includes(must)) return h;
     }
   }
   return null;
@@ -249,13 +258,19 @@ function loadCSV() {
     skipEmptyLines: true,
     complete: function (results) {
       const rows = results.data;
-      const headers = Object.keys(rows[0]);
+      const headers = Object.keys(rows);
       const colC = matchCabecera(['Vehicle Key/Placa', 'Placa'], headers);
       const colD = matchCabecera(['Customer Account # / Cliente', 'Cliente', 'Account', 'Cuenta'], headers);
       const colE = matchCabecera(['Customer Name/Solic', 'Solicitante', 'Solic'], headers);
       const colF = matchCabecera(['Customer Name2', 'Solicitante 2', 'Solic2'], headers);
       const colG = matchCabecera(['RUTA VENTA', 'Ruta Venta', 'Ruta'], headers);
-      const colM = matchCabecera(['Asignación', 'Asignacion', 'Asignación'], headers);
+      // ASIGNACION: búsqueda aún más flexible
+      let colM = matchCabecera(['Asignación', 'Asignacion', 'Asignación'], headers, true);
+      if(!colM){
+        colM = headers.find(h => h.toLowerCase().includes('asign'));
+      }
+      if(!colM){console.warn('Ninguna columna de Asignación encontrada en el CSV');}
+      else {console.log('Usando columna Asignación:', colM);}
       const telefonoCols = headers.filter(h => {
         const norm = h.toLowerCase().replace(/[\u0300-\u036f]/g, '');
         return /\btel(e?fono)?\b/.test(norm);
