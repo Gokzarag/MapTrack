@@ -25,28 +25,35 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      margin-bottom: 5px;
-      width: 48px; height: 48px;
+      margin-bottom: 8px;
+      width: 72px; height: 72px;
     }
     .logo-circle {
-      width: 45px;
-      height: 45px;
-      min-width: 45px;
-      min-height: 45px;
+      width: 68px;
+      height: 68px;
+      min-width: 68px;
+      min-height: 68px;
       border-radius: 50%;
-      background: #fff;
+      background: linear-gradient(135deg, #fff 65%, #e9f0fa 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 8px #e9e9ee77;
-      padding: 2px;
+      box-shadow: 0 4px 20px 0 #bbd1ff66, 0 1px 1px 0 #e9556790;
+      border: 2px solid #e95567;
+      transition: box-shadow 0.3s, border 0.3s;
+    }
+    .logo-circle:hover {
+      box-shadow: 0 8px 38px 0 #bbd1ffd9, 0 3px 6px 0 #e95567bb;
+      border: 2.5px solid #f2828e;
     }
     .logo-circle img {
-      width: 32px;
-      height: 32px;
+      width: 48px;
+      height: 48px;
       display: block;
       border-radius: 50%;
       object-fit: cover;
+      box-shadow: 0 2.5px 10px #e28234b1;
+      background: transparent;
     }
     .header-title {
       font-size: 1.13em;
@@ -156,6 +163,9 @@
     @media (max-width: 770px) {
       table { min-width:630px; font-size:10.6px; }
       th, td { font-size:11px;}
+      .logo-outer { width:48px; height:48px;}
+      .logo-circle { width:44px; height:44px;}
+      .logo-circle img { width:28px; height:28px;}
     }
     @media (max-width:600px) {
       .header-block { margin:23px 3px 0 2px;}
@@ -228,14 +238,12 @@ function toDDMMYYYY(fechaStr) {
 
 function matchCabecera(posibles, headers, forceContains) {
   const norm = s => s.toLowerCase().replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-  // 1ro: intentamos por lista posible exacta
   for (let pos of posibles) {
     let npos = norm(pos);
     for (let h of headers) {
       if (norm(h) === npos) return h;
     }
   }
-  // 2do: si forceContains, cualquier columna que contenga el texto listado
   if(forceContains && posibles.length) {
     let must = norm(posibles[0]).replace(/[^a-z]/g,'');
     for (let h of headers) {
@@ -270,7 +278,6 @@ function loadCSV() {
       const colE = matchCabecera(['Customer Name/Solic', 'Solicitante', 'Solic'], headers);
       const colF = matchCabecera(['Customer Name2', 'Solicitante 2', 'Solic2'], headers);
       const colG = matchCabecera(['RUTA VENTA', 'Ruta Venta', 'Ruta'], headers);
-      // ASIGNACION: búsqueda aún más flexible
       let colM = matchCabecera(['Asignación', 'Asignacion', 'Asignación'], headers, true);
       if(!colM){
         colM = headers.find(h => h.toLowerCase().includes('asign'));
@@ -313,8 +320,6 @@ function loadCSV() {
           Pedido: safeField(row, [colH]),
         };
       }));
-      // Ayuda de depuración
-      console.log("Cabeceras detectadas:", {colC, colD, colE, colF, colG, colM, telefonoCols, colP, colO, colH, colA, colQ, colR});
       if (dataRows.length > 0) console.log("Ejemplo de fila procesada:", dataRows[0]);
       mostrarFechaEntrega(dataRows);
       renderTable();
@@ -397,4 +402,3 @@ window.onload = loadCSV;
 </script>
 </body>
 </html>
-
