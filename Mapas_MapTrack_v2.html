@@ -4,109 +4,138 @@
   <meta charset="UTF-8" />
   <title>Mapas - MapTrack v2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Favicon con el logo, debe ser PNG o SVG transparente para mejor resultado -->
-  <link rel="icon" type="image/png" href=""https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <!-- Favicon PNG (asegúrate de que exista y tenga fondo transparente) -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
   <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      max-width: 950px;
-      margin: 0 auto;
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
       background: #f7faff;
       color: #23272f;
-      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       box-sizing: border-box;
+    }
+    body {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     .header-row {
       display: flex;
+      flex-direction: column;
       align-items: center;
+      background: none;
+      margin-top: 2vw;
+      margin-bottom: 10px;
       gap: 16px;
-      padding: 32px 0 18px 0;
-      background: #ffffffcc;
-      border-radius: 18px;
-      box-shadow: 0 8px 32px #b2cfff4d;
-      margin-top: 32px;
-      margin-bottom: 22px;
-      justify-content: flex-start;
+      user-select: none;
+    }
+    .logo-glow {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 55% 45%, #bae8ff 0 65%, #fff0 66%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 40px #44d3fc50;
+      margin-bottom: 0;
+      margin-top: 10px;
     }
     .header-row img {
-      height: 54px;
-      width: 54px;
+      width: 75px;
+      height: 75px;
       border-radius: 50%;
-      box-shadow: 0 2px 18px #32baff25;
+      background: #fff;
+      box-shadow: 0 6px 36px #40e0fc44, 0 2px 2px #73aaff28;
+      border: 3.5px solid #e0f7ff;
       object-fit: cover;
-      background: #eaf7ff;
-      border: 2px solid #ccedff;
-      /* Quita el cuadro blanco, marcando fondo circular */
       display: block;
+      z-index: 2;
     }
     .header-row h2 {
-      letter-spacing: 0.01em;
-      font-size: 1.55em;
-      color: #006af6;
-      background: linear-gradient(90deg, #41d8fc 20%, #3561db 80%);
+      margin: 0;
+      font-size: 2.2em;
+      font-weight: 700;
+      text-align: center;
+      color: #0496ec;
+      background: linear-gradient(90deg, #41d8fc 30%, #3561db 95%);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 8px #59c7fc27;
+      margin-bottom: 0.25em;
+      margin-top: 0.1em;
+      line-height: 1.02em;
     }
     .filtros-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 17px;
-      background: #f3f8ffea;
-      border-radius: 13px;
-      padding: 13px 19px;
-      box-shadow: 0 2px 8px #d3e3ff60;
-      margin-bottom: 10px;
-      margin-top: 10px;
+      justify-content: center;
+      gap: 18px 22px;
+      background: #eff7fbde;
+      border-radius: 14px;
+      padding: 13px 22px;
+      box-shadow: 0 2px 8px #bce3ff48;
+      margin-bottom: 12px;
+      margin-top: 5px;
+      font-size: 1.1em;
     }
     label {
-      font-size: 1.01em;
-      color: #004486;
+      font-size: 1em;
+      color: #0075ae;
       font-weight: 500;
     }
     select {
       font-size: 1em;
-      padding: 8px 26px 8px 12px;
-      border-radius: 7px;
+      padding: 9px 28px 9px 12px;
+      border-radius: 8px;
       border: none;
-      background: #f5faff;
-      box-shadow: 0 2px 8px #afceff22 inset;
-      color: #283349;
-      transition: box-shadow 0.16s, border 0.16s;
+      background: #fafdff;
+      box-shadow: 0 2px 7px #cbe8ff38 inset;
+      color: #26496b;
       margin-left: 2px;
-      margin-right: 14px;
+      margin-right: 12px;
       appearance: none;
       cursor: pointer;
       font-family: inherit;
       outline: none;
+      font-weight: 500;
+      transition: box-shadow 0.16s, border 0.16s;
     }
     select:focus {
       box-shadow: 0 0 0 2px #009aea33, 0 2px 8px #afceff22 inset;
       border: 1.5px solid #009aea;
     }
     .fecha-entrega {
-      margin: 17px 0 0 6px;
-      font-size: 1.02em;
+      font-size: 1.07em;
       color: #2563eb;
       font-weight: 600;
+      margin: 13px 0 8px 8px;
       letter-spacing: 0.01em;
+      text-align: center;
     }
     #map {
-      height: 540px;
-      width: 99%;
-      min-width: 312px;
-      min-height: 330px;
-      margin: 18px auto 0 auto;
+      flex: 1;
+      min-height: 52vh;
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 0;
       background: #f5f9ff;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px #b6d7ef35, 0 2px 5px #a4aeb833;
-      border: 1.8px solid #e5eefd;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #a6d8ef28, 0 2px 5px #a1bbd021;
+      border: 2px solid #e6f6fc;
+      max-height: 86vh;
       transition: box-shadow 0.17s;
     }
     .nombre-link {
@@ -146,49 +175,30 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #b4e1fc;
     }
+    @media (max-width: 900px) {
+      body { max-width: 98vw; }
+      .header-row h2 { font-size: 1.45em;}
+      .logo-glow { width: 68vw; max-width: 100px; min-width: 60px; height: auto;}
+      .header-row img { width: 54px; height: 54px; }
+      #map { min-height: 250px;}
+    }
     @media (max-width: 700px) {
-      .header-row {
-        flex-direction: row;
-        gap: 13px;
-        margin-top: 8vw;
-        margin-bottom: 2vw;
-        padding: 12px 0 7px 0;
-      }
-      .header-row h2 {
-        font-size: 1.13em;
-      }
-      .filtros-row {
-        padding: 7px 7vw;
-        font-size: 0.98em;
-        gap: 9px;
-        margin-left: 0;
-        margin-right: 0;
-      }
-      #map {
-        height: 290px;
-        min-width: 99vw;
-        min-height: 220px;
-        border-radius: 8px;
-      }
-      .fecha-entrega {
-        font-size: 0.98em;
-        margin-top: 10px;
-      }
+      .header-row { margin-top: 2vw;}
+      .header-row h2 { font-size: 1.02em;}
+      .filtros-row { padding: 8px 4vw; font-size: 0.99em; gap: 10px;}
+      #map { min-height: 180px; border-radius: 11px; }
+      .fecha-entrega { font-size: 0.96em;}
     }
-    select, #map, .filtros-row {
-      transition: box-shadow 0.19s, border 0.19s;
-    }
-    select:hover {
-      box-shadow: 0 0 0 2px #d9f3ff;
-    }
-    h2, .header-row h2 {
-      transition: background 0.3s, color 0.3s;
-    }
+    select, #map, .filtros-row { transition: box-shadow 0.19s, border 0.19s;}
+    select:hover { box-shadow: 0 0 0 2px #d9f3ff; }
+    h2, .header-row h2 { transition: background 0.3s, color 0.3s; }
   </style>
 </head>
 <body>
   <div class="header-row">
-    <img src=""https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo MapTrack" />
+    <span class="logo-glow">
+      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo MapTrack" />
+    </span>
     <h2>Mapas - MapTrack v2.0</h2>
   </div>
   <div class="filtros-row">
@@ -359,5 +369,4 @@
   </script>
 </body>
 </html>
-
 
