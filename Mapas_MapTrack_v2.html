@@ -210,6 +210,7 @@
   <div class="fecha-entrega" id="fechaEntrega"></div>
   <div id="map"></div>
   <script>
+    // == FUNCIONES PRINCIPALES Y PERSONALIZACIÓN AVANZADA ==
     const csv_url = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
     const COL_PLACA = 'Vehicle Key/Placa';
     const COL_CODIGO_CLIENTE = 'Customer Account # / Cliente';
@@ -220,21 +221,23 @@
     const COL_LAT = 'Latitude';
     const COL_LNG = 'Longitude';
     const COL_FECHA = 'Fecha de Entrega';
+
     function toDDMMYYYY(fechaStr) {
       if (!fechaStr) return '';
       if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
-        let [a,m,d] = fechaStr.trim().split('-');
-        return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
+        let [a, m, d] = fechaStr.trim().split('-');
+        return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${a}`;
       }
       let sep = fechaStr.includes('/') ? '/' : '-';
       let [p1, p2, p3] = fechaStr.trim().split(sep);
       if (p3 && p3.length === 4) {
         let d = parseInt(p1, 10), m = parseInt(p2, 10), y = parseInt(p3, 10);
-        if (m>12) { [d,m]=[m,d]; }
-        return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;
+        if (m > 12) { [d, m] = [m, d]; }
+        return `${d.toString().padStart(2, '0')}/${m.toString().padStart(2, '0')}/${y}`;
       }
       return fechaStr;
     }
+
     function getColorForString(str, total) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -243,20 +246,38 @@
       const hue = Math.abs(hash) % total;
       return `hsl(${Math.round(hue * (360 / total))},75%,49%)`;
     }
+
     function makeCustomMarker(color) {
       const svg = encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="29" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}"/></svg>`
+        `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="33" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#ccc" stroke-width="1"/></svg>`
       );
       return L.icon({
         iconUrl: "data:image/svg+xml," + svg,
-        iconSize: [20, 29],
-        iconAnchor: [10, 29],
+        iconSize: [24, 33],
+        iconAnchor: [12, 33],
         popupAnchor: [0, -25]
       });
     }
+
+    // == VISITADOS EN LOCALSTORAGE ==
+    function getVisited() {
+      try {
+        return JSON.parse(localStorage.getItem('visitedPoints_MapTrack') || '{}');
+      } catch {
+        return {};
+      }
+    }
+    function setVisited(obj) {
+      localStorage.setItem('visitedPoints_MapTrack', JSON.stringify(obj));
+    }
+    function getUniqueId(row) {
+      return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}`;
+    }
+
     let rawData = [];
     let map, markers = [];
     let firstLoad = true;
+
     function uniqueBy(arr, keys) {
       const seen = {};
       return arr.filter(row => {
@@ -266,6 +287,7 @@
         return true;
       });
     }
+
     function createMap(latDefault = -12.1, lngDefault = -77.0) {
       map = L.map('map').setView([latDefault, lngDefault], 12);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -273,6 +295,7 @@
         attribution: '&copy; <a href="https://carto.com/">CartoDB</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(map);
     }
+
     function plotMarkers(data) {
       if (markers.length > 0) for (const m of markers) map.removeLayer(m);
       markers = [];
@@ -280,20 +303,27 @@
       const clientesUnique = [...new Set(data.map(row => row[COL_NOMBRE_CLIENTE]))];
       const colorMap = {};
       clientesUnique.forEach((cliente, i) => {
-        colorMap[cliente] = getColorForString(cliente, clientesUnique.length+2);
+        colorMap[cliente] = getColorForString(cliente, clientesUnique.length + 2);
       });
+      const visited = getVisited();
+
       let any = false;
-      for (const row of data) {
+      data.forEach((row, idx) => {
         const lat = parseFloat(row[COL_LAT]);
         const lng = parseFloat(row[COL_LNG]);
-        if (!lat || !lng) continue;
+        if (!lat || !lng) return;
         let clienteLabel = row[COL_NOMBRE_CLIENTE];
         const comentario = row[COL_ERROR];
-        if (comentario && !['', 'error', '(blank)', '(blanco)', ' '].includes((comentario||"").trim().toLowerCase())) {
+        if (comentario && !['', 'error', '(blank)', '(blanco)', ' '].includes((comentario || "").trim().toLowerCase())) {
           clienteLabel += ` (${comentario})`;
         }
         const direccion = `${row[COL_ADDRESS]} - ${row[COL_CITY]}`;
         const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
+
+        const pointId = getUniqueId(row);
+        const isChecked = visited[pointId] ? 'checked' : '';
+        const markerColor = visited[pointId] ? "#FFFFFF" : colorMap[row[COL_NOMBRE_CLIENTE]];
+
         const popup = `
           <div style="font-size:1em;">
             <a class="nombre-link" href="${gmaps}" target="_blank"
@@ -301,12 +331,26 @@
               ${clienteLabel}
             </a><br>
             <span>${direccion}</span>
+            <br>
+            <label><input type="checkbox" id="visited_${pointId}" ${isChecked}> Visitado</label>
           </div>
         `;
-        const marker = L.marker([lat, lng], { icon: makeCustomMarker(colorMap[row[COL_NOMBRE_CLIENTE]]) });
-        marker.bindPopup(popup, {maxWidth: 300});
-        marker.on('click', function(e) {
-           marker.openPopup();
+        const marker = L.marker([lat, lng], { icon: makeCustomMarker(markerColor) });
+        marker.bindPopup(popup, { maxWidth: 300 });
+        marker.on('popupopen', function () {
+          const cb = document.getElementById('visited_' + pointId);
+          if (cb) {
+            cb.addEventListener('change', function () {
+              const v = getVisited();
+              if (cb.checked) {
+                v[pointId] = true;
+              } else {
+                delete v[pointId];
+              }
+              setVisited(v);
+              marker.setIcon(makeCustomMarker(cb.checked ? "#FFFFFF" : colorMap[row[COL_NOMBRE_CLIENTE]]));
+            });
+          }
         });
         marker.addTo(map);
         markers.push(marker);
@@ -314,16 +358,18 @@
           map.setView([lat, lng], 15);
           any = true;
         }
-      }
+      });
     }
+
     function filtrarComboClientes(placa) {
       const clientesSet = new Set();
       rawData.filter(row => row[COL_PLACA] === placa)
-             .forEach(row => clientesSet.add(row[COL_NOMBRE_CLIENTE]));
+        .forEach(row => clientesSet.add(row[COL_NOMBRE_CLIENTE]));
       const clientes = Array.from(clientesSet).sort();
       const sel = document.getElementById('cliente');
       sel.innerHTML = '<option value="">Todos</option>' + clientes.map(c => `<option value="${c}">${c}</option>`).join('');
     }
+
     function filtrarYRenderizar() {
       const placaSel = document.getElementById('placa').value;
       const clienteSel = document.getElementById('cliente').value;
@@ -336,11 +382,12 @@
       let fechaDDMMYYYY = fecha ? toDDMMYYYY(fecha) : '';
       document.getElementById('fechaEntrega').textContent = fechaDDMMYYYY ? ('Fecha de entrega: ' + fechaDDMMYYYY) : '';
     }
+
     Papa.parse(csv_url, {
       download: true,
       header: true,
       skipEmptyLines: true,
-      complete: function(results) {
+      complete: function (results) {
         rawData = results.data.filter(row =>
           row[COL_PLACA] && row[COL_CODIGO_CLIENTE] && row[COL_LAT] && row[COL_LNG] &&
           !isNaN(parseFloat(row[COL_LAT])) &&
@@ -361,15 +408,14 @@
         }
       }
     });
-    document.getElementById('placa').addEventListener('change', function(e) {
+    document.getElementById('placa').addEventListener('change', function (e) {
       filtrarComboClientes(e.target.value);
       filtrarYRenderizar();
     });
     document.getElementById('cliente').addEventListener('change', filtrarYRenderizar);
 
-    // --- Ubicación en Vivo del Usuario ---
+    // === UBICACIÓN EN TIEMPO REAL ===
     let liveLocationMarker = null;
-
     function onLocationFound(e) {
       if (!liveLocationMarker) {
         liveLocationMarker = L.marker(e.latlng, {
@@ -383,19 +429,16 @@
         liveLocationMarker.setLatLng(e.latlng);
       }
     }
-
     function onLocationError(e) {
       alert("No se puede acceder a tu ubicación en vivo: " + e.message);
     }
-
     if ("geolocation" in navigator) {
-      document.addEventListener("DOMContentLoaded", function() {
-        // Asegura que el mapa ya esté cargado antes de pedir ubicación
-        let checkMapReady = setInterval(function(){
-          if(map){
+      document.addEventListener("DOMContentLoaded", function () {
+        let checkMapReady = setInterval(function () {
+          if (map) {
             map.on("locationfound", onLocationFound);
             map.on("locationerror", onLocationError);
-            map.locate({watch: true, setView: false, maxZoom: 16});
+            map.locate({ watch: true, setView: false, maxZoom: 16 });
             clearInterval(checkMapReady);
           }
         }, 200);
@@ -406,4 +449,3 @@
   </script>
 </body>
 </html>
-
