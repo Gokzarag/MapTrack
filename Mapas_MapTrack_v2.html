@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Mapas - MapTrack v2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Favicon PNG (asegúrate de que exista y tenga fondo transparente) -->
+  <!-- Favicon PNG (debe existir y tener fondo transparente) -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
   <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -366,6 +366,43 @@
       filtrarYRenderizar();
     });
     document.getElementById('cliente').addEventListener('change', filtrarYRenderizar);
+
+    // --- Ubicación en Vivo del Usuario ---
+    let liveLocationMarker = null;
+
+    function onLocationFound(e) {
+      if (!liveLocationMarker) {
+        liveLocationMarker = L.marker(e.latlng, {
+          icon: L.icon({
+            iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+          })
+        }).addTo(map).bindPopup("Tu ubicación actual");
+      } else {
+        liveLocationMarker.setLatLng(e.latlng);
+      }
+    }
+
+    function onLocationError(e) {
+      alert("No se puede acceder a tu ubicación en vivo: " + e.message);
+    }
+
+    if ("geolocation" in navigator) {
+      document.addEventListener("DOMContentLoaded", function() {
+        // Asegura que el mapa ya esté cargado antes de pedir ubicación
+        let checkMapReady = setInterval(function(){
+          if(map){
+            map.on("locationfound", onLocationFound);
+            map.on("locationerror", onLocationError);
+            map.locate({watch: true, setView: false, maxZoom: 16});
+            clearInterval(checkMapReady);
+          }
+        }, 200);
+      });
+    } else {
+      alert("Tu navegador no soporta geolocalización.");
+    }
   </script>
 </body>
 </html>
