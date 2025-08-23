@@ -2,215 +2,69 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Mapas - MapTrack v2.0</title>
+  <title>MapTrack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Favicon PNG (debe existir y tener fondo transparente) -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
-  <!-- Leaflet y PapaParse -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet" />
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: #f7faff;
-      color: #23272f;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      box-sizing: border-box;
+      height: 100%; margin: 0; padding: 0;
+      font-family: sans-serif; background: #f7faff;
     }
-    body {
-      max-width: 1200px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    body { display: flex; flex-direction: column; max-width: 1200px; margin: auto; }
+    /* === HEADER SUPER COMPACTO === */
     .header-row {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: none;
-      margin-top: 2vw;
-      margin-bottom: 10px;
-      gap: 16px;
-      user-select: none;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; padding: 4px 8px; background: #e9f5fb;
+      border-bottom: 1px solid #cde7f7;
+      flex-wrap: wrap;
     }
-    .logo-glow {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 55% 45%, #bae8ff 0 65%, #fff0 66%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 40px #44d3fc50;
-      margin-bottom: 0;
-      margin-top: 10px;
+    .header-left {
+      display: flex; align-items: center; gap: 8px;
     }
     .header-row img {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 6px 36px #40e0fc44, 0 2px 2px #73aaff28;
-      border: 3.5px solid #e0f7ff;
-      object-fit: cover;
-      display: block;
-      z-index: 2;
+      width: 36px; height: 36px; border-radius: 50%; border: 1px solid #cceeff;
     }
-    .header-row h2 {
-      margin: 0;
-      font-size: 2.2em;
-      font-weight: 700;
-      text-align: center;
-      color: #0496ec;
-      background: linear-gradient(90deg, #41d8fc 30%, #3561db 95%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 0.03em;
-      text-shadow: 0 2px 8px #59c7fc27;
-      margin-bottom: 0.25em;
-      margin-top: 0.1em;
-      line-height: 1.02em;
-    }
-    .filtros-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 18px 22px;
-      background: #eff7fbde;
-      border-radius: 14px;
-      padding: 13px 22px;
-      box-shadow: 0 2px 8px #bce3ff48;
-      margin-bottom: 12px;
-      margin-top: 5px;
-      font-size: 1.1em;
-    }
-    label {
-      font-size: 1em;
-      color: #0075ae;
-      font-weight: 500;
-    }
+    .filtros-row { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.9em; }
+    label { font-weight: 500; color: #036; }
     select {
-      font-size: 1em;
-      padding: 9px 28px 9px 12px;
-      border-radius: 8px;
-      border: none;
-      background: #fafdff;
-      box-shadow: 0 2px 7px #cbe8ff38 inset;
-      color: #26496b;
-      margin-left: 2px;
-      margin-right: 12px;
-      appearance: none;
-      cursor: pointer;
-      font-family: inherit;
-      outline: none;
-      font-weight: 500;
-      transition: box-shadow 0.16s, border 0.16s;
-    }
-    select:focus {
-      box-shadow: 0 0 0 2px #009aea33, 0 2px 8px #afceff22 inset;
-      border: 1.5px solid #009aea;
+      padding: 2px 6px; font-size: 0.9em;
+      border: 1px solid #bcd9ff; border-radius: 4px;
+      background: #fff; cursor: pointer;
     }
     .fecha-entrega {
-      font-size: 1.07em;
-      color: #2563eb;
-      font-weight: 600;
-      margin: 13px 0 8px 8px;
-      letter-spacing: 0.01em;
-      text-align: center;
+      font-size: 0.9em; color: #2563eb; font-weight: 600;
+      white-space: nowrap;
     }
     #map {
-      flex: 1;
-      min-height: 52vh;
-      width: 100%;
-      margin: 0 auto;
-      margin-top: 0;
-      background: #f5f9ff;
-      border-radius: 18px;
-      box-shadow: 0 8px 30px #a6d8ef28, 0 2px 5px #a1bbd021;
-      border: 2px solid #e6f6fc;
-      max-height: 86vh;
-      transition: box-shadow 0.17s;
+      flex: 1; border: 1px solid #d2ebf7;
+      border-radius: 8px; margin: 4px;
+      min-height: 75vh;
     }
-    .nombre-link {
-      word-break: break-all;
-      font-weight: 700;
-      text-decoration: underline dotted;
-      display: inline-block;
-      color: #3483ff;
-      font-size: 1.05em;
-      transition: color 0.14s;
+    @media (max-width:600px){
+      .header-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .fecha-entrega { margin-top: 2px; }
     }
-    .nombre-link:hover {
-      color: #60e4b0;
-      text-decoration-color: #36e8bd;
-    }
-    .leaflet-popup-content-wrapper {
-      border-radius: 12px;
-      background: #fafdffec;
-      box-shadow: 0 6px 16px #8ab6fc40;
-      border: 1px solid #cbe6ff;
-    }
-    .leaflet-popup-content {
-      font-size: 1.01em;
-      color: #124;
-      font-family: inherit;
-    }
-    ::-webkit-scrollbar {
-      height: 13px;
-      width: 10px;
-      background: #f1f3fa;
-      border-radius: 5px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #d1eaff;
-      border-radius: 5px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #b4e1fc;
-    }
-    @media (max-width: 900px) {
-      body { max-width: 98vw; }
-      .header-row h2 { font-size: 1.45em;}
-      .logo-glow { width: 68vw; max-width: 100px; min-width: 60px; height: auto;}
-      .header-row img { width: 54px; height: 54px; }
-      #map { min-height: 250px;}
-    }
-    @media (max-width: 700px) {
-      .header-row { margin-top: 2vw;}
-      .header-row h2 { font-size: 1.02em;}
-      .filtros-row { padding: 8px 4vw; font-size: 0.99em; gap: 10px;}
-      #map { min-height: 180px; border-radius: 11px; }
-      .fecha-entrega { font-size: 0.96em;}
-    }
-    select, #map, .filtros-row { transition: box-shadow 0.19s, border 0.19s;}
-    select:hover { box-shadow: 0 0 0 2px #d9f3ff; }
-    h2, .header-row h2 { transition: background 0.3s, color 0.3s; }
   </style>
 </head>
 <body>
   <div class="header-row">
-    <span class="logo-glow">
-      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo MapTrack" />
-    </span>
-    <h2>Mapas - MapTrack v2.0</h2>
+    <div class="header-left">
+      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo" />
+      <div class="filtros-row">
+        <label for="placa">Placa:</label><select id="placa"></select>
+        <label for="cliente">Cliente:</label><select id="cliente"></select>
+      </div>
+    </div>
+    <div class="fecha-entrega" id="fechaEntrega"></div>
   </div>
-  <div class="filtros-row">
-    <label for="placa">Placa:</label>
-    <select id="placa"></select>
-    <label for="cliente">Cliente:</label>
-    <select id="cliente"></select>
-  </div>
-  <div class="fecha-entrega" id="fechaEntrega"></div>
+
   <div id="map"></div>
+
   <script>
-    // == FUNCIONES PRINCIPALES Y PERSONALIZACIÓN AVANZADA ==
+    // === VARIABLES DE DATOS ===
     const csv_url = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
     const COL_PLACA = 'Vehicle Key/Placa';
     const COL_CODIGO_CLIENTE = 'Customer Account # / Cliente';
@@ -225,227 +79,51 @@
     function toDDMMYYYY(fechaStr) {
       if (!fechaStr) return '';
       if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
-        let [a, m, d] = fechaStr.trim().split('-');
-        return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${a}`;
+        let [a,m,d]=fechaStr.trim().split('-'); return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
       }
       let sep = fechaStr.includes('/') ? '/' : '-';
-      let [p1, p2, p3] = fechaStr.trim().split(sep);
-      if (p3 && p3.length === 4) {
-        let d = parseInt(p1, 10), m = parseInt(p2, 10), y = parseInt(p3, 10);
-        if (m > 12) { [d, m] = [m, d]; }
-        return `${d.toString().padStart(2, '0')}/${m.toString().padStart(2, '0')}/${y}`;
-      }
+      let [p1,p2,p3] = fechaStr.trim().split(sep);
+      if (p3 && p3.length===4){let d=parseInt(p1),m=parseInt(p2),y=parseInt(p3); if(m>12)[d,m]=[m,d];
+        return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;}
       return fechaStr;
     }
 
-    function getColorForString(str, total) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const hue = Math.abs(hash) % total;
-      return `hsl(${Math.round(hue * (360 / total))},75%,49%)`;
-    }
+    function getColorForString(str,total){let hash=0;for(let i=0;i<str.length;i++){hash=str.charCodeAt(i)+((hash<<5)-hash);}const hue=Math.abs(hash)%total;return `hsl(${Math.round(hue*(360/total))},75%,49%)`;}
+    function makeCustomMarker(color){const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[22,30],iconAnchor:[11,30],popupAnchor:[0,-25]});}
+    function getVisited(){try{return JSON.parse(localStorage.getItem('visitedPoints_MapTrack')||'{}')}catch{return {}}}
+    function setVisited(obj){localStorage.setItem('visitedPoints_MapTrack',JSON.stringify(obj))}
+    function getUniqueId(row){return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}`;}
 
-    function makeCustomMarker(color) {
-      const svg = encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="33" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#ccc" stroke-width="1"/></svg>`
-      );
-      return L.icon({
-        iconUrl: "data:image/svg+xml," + svg,
-        iconSize: [24, 33],
-        iconAnchor: [12, 33],
-        popupAnchor: [0, -25]
+    let rawData=[],map,markers=[];
+    function uniqueBy(arr,keys){const seen={};return arr.filter(row=>{const key=keys.map(k=>row[k]).join('|');if(seen[key])return false;seen[key]=true;return true;});}
+    function createMap(){map=L.map('map').setView([-12.1,-77.0],12);L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(map);}
+    function plotMarkers(data){
+      markers.forEach(m=>map.removeLayer(m));markers=[];
+      const clientes=[...new Set(data.map(r=>r[COL_NOMBRE_CLIENTE]))];
+      const colores={};clientes.forEach((c,i)=>{colores[c]=getColorForString(c,clientes.length+2)});
+      const visited=getVisited();
+      data.forEach(row=>{
+        const lat=parseFloat(row[COL_LAT]),lng=parseFloat(row[COL_LNG]); if(!lat||!lng)return;
+        let cliente=row[COL_NOMBRE_CLIENTE];const com=row[COL_ERROR];if(com&&!(["","error","(blank)","(blanco)"].includes(com.trim().toLowerCase())))cliente+=` (${com})`;
+        const gmaps=`https://www.google.com/maps?q=${lat},${lng}`;const pointId=getUniqueId(row);const checked=visited[pointId]?"checked":"";const color=visited[pointId]?"#fff":colores[row[COL_NOMBRE_CLIENTE]];
+        const popup=`<div><a href="${gmaps}" target="_blank" style="color:${colores[row[COL_NOMBRE_CLIENTE]]};font-weight:bold;">${cliente}</a><br>${row[COL_ADDRESS]} - ${row[COL_CITY]}<br><label><input type="checkbox" id="v_${pointId}" ${checked}> Visitado</label></div>`;
+        const mk=L.marker([lat,lng],{icon:makeCustomMarker(color)}).bindPopup(popup);mk.on("popupopen",()=>{const cb=document.getElementById("v_"+pointId);if(cb)cb.addEventListener("change",()=>{let v=getVisited();if(cb.checked){v[pointId]=true;}else delete v[pointId];setVisited(v);mk.setIcon(makeCustomMarker(cb.checked?"#fff":colores[row[COL_NOMBRE_CLIENTE]]));});});mk.addTo(map);markers.push(mk);
       });
     }
+    function filtrarClientes(placa){const set=new Set();rawData.filter(r=>r[COL_PLACA]===placa).forEach(r=>set.add(r[COL_NOMBRE_CLIENTE]));const sel=document.getElementById("cliente");sel.innerHTML='<option value="">Todos</option>'+[...set].sort().map(c=>`<option>${c}</option>`).join('');}
+    function filtrar(){let placa=document.getElementById("placa").value,cliente=document.getElementById("cliente").value;let data=rawData.filter(r=>r[COL_PLACA]===placa);if(cliente) data=data.filter(r=>r[COL_NOMBRE_CLIENTE]===cliente);data=uniqueBy(data,[COL_PLACA,COL_CODIGO_CLIENTE]);plotMarkers(data);let fecha=data.length?toDDMMYYYY(data[0][COL_FECHA]):"";document.getElementById("fechaEntrega").textContent=fecha?("Entrega: "+fecha):"";}
 
-    // == VISITADOS EN LOCALSTORAGE ==
-    function getVisited() {
-      try {
-        return JSON.parse(localStorage.getItem('visitedPoints_MapTrack') || '{}');
-      } catch {
-        return {};
-      }
-    }
-    function setVisited(obj) {
-      localStorage.setItem('visitedPoints_MapTrack', JSON.stringify(obj));
-    }
-    function getUniqueId(row) {
-      return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}`;
-    }
-
-    let rawData = [];
-    let map, markers = [];
-    let firstLoad = true;
-
-    function uniqueBy(arr, keys) {
-      const seen = {};
-      return arr.filter(row => {
-        const key = keys.map(k => row[k]).join('|');
-        if (seen[key]) return false;
-        seen[key] = true;
-        return true;
-      });
-    }
-
-    function createMap(latDefault = -12.1, lngDefault = -77.0) {
-      map = L.map('map').setView([latDefault, lngDefault], 12);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://carto.com/">CartoDB</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
-    }
-
-    function plotMarkers(data) {
-      if (markers.length > 0) for (const m of markers) map.removeLayer(m);
-      markers = [];
-      if (data.length === 0) return;
-      const clientesUnique = [...new Set(data.map(row => row[COL_NOMBRE_CLIENTE]))];
-      const colorMap = {};
-      clientesUnique.forEach((cliente, i) => {
-        colorMap[cliente] = getColorForString(cliente, clientesUnique.length + 2);
-      });
-      const visited = getVisited();
-
-      let any = false;
-      data.forEach((row, idx) => {
-        const lat = parseFloat(row[COL_LAT]);
-        const lng = parseFloat(row[COL_LNG]);
-        if (!lat || !lng) return;
-        let clienteLabel = row[COL_NOMBRE_CLIENTE];
-        const comentario = row[COL_ERROR];
-        if (comentario && !['', 'error', '(blank)', '(blanco)', ' '].includes((comentario || "").trim().toLowerCase())) {
-          clienteLabel += ` (${comentario})`;
-        }
-        const direccion = `${row[COL_ADDRESS]} - ${row[COL_CITY]}`;
-        const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
-
-        const pointId = getUniqueId(row);
-        const isChecked = visited[pointId] ? 'checked' : '';
-        const markerColor = visited[pointId] ? "#FFFFFF" : colorMap[row[COL_NOMBRE_CLIENTE]];
-
-        const popup = `
-          <div style="font-size:1em;">
-            <a class="nombre-link" href="${gmaps}" target="_blank"
-               style="color:${colorMap[row[COL_NOMBRE_CLIENTE]]};text-decoration:underline;font-weight:bold;">
-              ${clienteLabel}
-            </a><br>
-            <span>${direccion}</span>
-            <br>
-            <label><input type="checkbox" id="visited_${pointId}" ${isChecked}> Visitado</label>
-          </div>
-        `;
-        const marker = L.marker([lat, lng], { icon: makeCustomMarker(markerColor) });
-        marker.bindPopup(popup, { maxWidth: 300 });
-        marker.on('popupopen', function () {
-          const cb = document.getElementById('visited_' + pointId);
-          if (cb) {
-            cb.addEventListener('change', function () {
-              const v = getVisited();
-              if (cb.checked) {
-                v[pointId] = true;
-              } else {
-                delete v[pointId];
-              }
-              setVisited(v);
-              marker.setIcon(makeCustomMarker(cb.checked ? "#FFFFFF" : colorMap[row[COL_NOMBRE_CLIENTE]]));
-            });
-          }
-        });
-        marker.addTo(map);
-        markers.push(marker);
-        if (!any) {
-          map.setView([lat, lng], 15);
-          any = true;
-        }
-      });
-    }
-
-    function filtrarComboClientes(placa) {
-      const clientesSet = new Set();
-      rawData.filter(row => row[COL_PLACA] === placa)
-        .forEach(row => clientesSet.add(row[COL_NOMBRE_CLIENTE]));
-      const clientes = Array.from(clientesSet).sort();
-      const sel = document.getElementById('cliente');
-      sel.innerHTML = '<option value="">Todos</option>' + clientes.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-
-    function filtrarYRenderizar() {
-      const placaSel = document.getElementById('placa').value;
-      const clienteSel = document.getElementById('cliente').value;
-      let data = rawData.filter(row => row[COL_PLACA] === placaSel);
-      if (clienteSel) data = data.filter(row => row[COL_NOMBRE_CLIENTE] === clienteSel);
-      data = uniqueBy(data, [COL_PLACA, COL_CODIGO_CLIENTE]);
-      plotMarkers(data);
-      let fecha = '';
-      if (data.length > 0) fecha = data[0][COL_FECHA];
-      let fechaDDMMYYYY = fecha ? toDDMMYYYY(fecha) : '';
-      document.getElementById('fechaEntrega').textContent = fechaDDMMYYYY ? ('Fecha de entrega: ' + fechaDDMMYYYY) : '';
-    }
-
-    Papa.parse(csv_url, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        rawData = results.data.filter(row =>
-          row[COL_PLACA] && row[COL_CODIGO_CLIENTE] && row[COL_LAT] && row[COL_LNG] &&
-          !isNaN(parseFloat(row[COL_LAT])) &&
-          !isNaN(parseFloat(row[COL_LNG]))
-        );
-        const placas = [...new Set(rawData.map(row => row[COL_PLACA]))];
-        const sel = document.getElementById('placa');
-        sel.innerHTML = placas.map((p, i) => `<option value="${p}"${i===0?' selected':''}>${p}</option>`).join('');
-        filtrarComboClientes(placas[0]);
-        if (rawData.length > 0) {
-          let fechaTexto = rawData[COL_FECHA] ? toDDMMYYYY(rawData[COL_FECHA]) : '';
-          document.getElementById('fechaEntrega').textContent = fechaTexto ? ('Fecha de entrega: ' + fechaTexto) : '';
-        }
-        if (firstLoad) {
-          createMap();
-          filtrarYRenderizar();
-          firstLoad = false;
-        }
-      }
-    });
-    document.getElementById('placa').addEventListener('change', function (e) {
-      filtrarComboClientes(e.target.value);
-      filtrarYRenderizar();
-    });
-    document.getElementById('cliente').addEventListener('change', filtrarYRenderizar);
+    Papa.parse(csv_url,{download:true,header:true,skipEmptyLines:true,complete:r=>{
+      rawData=r.data.filter(row=>row[COL_PLACA]&&row[COL_CODIGO_CLIENTE]&&row[COL_LAT]&&row[COL_LNG]&&!isNaN(parseFloat(row[COL_LAT]))&&!isNaN(parseFloat(row[COL_LNG])));
+      const placas=[...new Set(rawData.map(r=>r[COL_PLACA]))];document.getElementById("placa").innerHTML=placas.map((p,i)=>`<option ${i==0?"selected":""}>${p}</option>`).join('');filtrarClientes(placas[0]);
+      createMap();filtrar();
+    }});
+    document.getElementById("placa").addEventListener("change",e=>{filtrarClientes(e.target.value);filtrar()});
+    document.getElementById("cliente").addEventListener("change",filtrar);
 
     // === UBICACIÓN EN TIEMPO REAL ===
-    let liveLocationMarker = null;
-    function onLocationFound(e) {
-      if (!liveLocationMarker) {
-        liveLocationMarker = L.marker(e.latlng, {
-          icon: L.icon({
-            iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
-          })
-        }).addTo(map).bindPopup("Tu ubicación actual");
-      } else {
-        liveLocationMarker.setLatLng(e.latlng);
-      }
-    }
-    function onLocationError(e) {
-      alert("No se puede acceder a tu ubicación en vivo: " + e.message);
-    }
-    if ("geolocation" in navigator) {
-      document.addEventListener("DOMContentLoaded", function () {
-        let checkMapReady = setInterval(function () {
-          if (map) {
-            map.on("locationfound", onLocationFound);
-            map.on("locationerror", onLocationError);
-            map.locate({ watch: true, setView: false, maxZoom: 16 });
-            clearInterval(checkMapReady);
-          }
-        }, 200);
-      });
-    } else {
-      alert("Tu navegador no soporta geolocalización.");
-    }
+    let live=null;function onLoc(e){if(!live){live=L.marker(e.latlng,{icon:L.icon({iconUrl:"https://cdn-icons-png.flaticon.com/512/64/64113.png",iconSize:[22,22],iconAnchor:[11,22]})}).addTo(map).bindPopup("Tú");}else live.setLatLng(e.latlng);}
+    if("geolocation" in navigator){setTimeout(()=>{map.on("locationfound",onLoc);map.locate({watch:true,setView:false,maxZoom:16});},1000);}
   </script>
 </body>
 </html>
