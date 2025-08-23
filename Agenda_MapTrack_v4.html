@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Agenda_Maptrack_v4</title>
+  <title>Maptrack - Agenda</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicon logotipo -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png">
@@ -14,126 +14,88 @@
       background: #fafcff;
       color: #222;
     }
-    .header-block {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 3px;
-      margin: 20px 7px 2px 7px;
-    }
-    .logo-outer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin-bottom: 8px;
-      width: 72px; height: 72px;
-    }
-    .logo-circle {
-      width: 68px;
-      height: 68px;
-      min-width: 68px;
-      min-height: 68px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #fff 65%, #e9f0fa 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px 0 #bbd1ff66, 0 1px 1px 0 #e9556790;
-      border: 2px solid #e95567;
-      transition: box-shadow 0.3s, border 0.3s;
-    }
-    .logo-circle:hover {
-      box-shadow: 0 8px 38px 0 #bbd1ffd9, 0 3px 6px 0 #e95567bb;
-      border: 2.5px solid #f2828e;
-    }
-    .logo-circle img {
-      width: 48px;
+    /* === HEADER ESTILO TOOLBAR === */
+    .header-toolbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #e9f5fb;
+      border-bottom: 1px solid #cde7f7;
+      padding: 4px 8px;
       height: 48px;
-      display: block;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 2.5px 10px #e28234b1;
-      background: transparent;
+      z-index: 9999;
+      flex-wrap: wrap;
+    }
+    .header-left {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header-logo {
+      width: 32px; height: 32px;
+      border-radius: 50%; border: 1px solid #cceeff;
     }
     .header-title {
-      font-size: 1.13em;
-      font-weight: bold;
-      margin: 0 0 0 5px;
-      line-height: 1.06;
-      letter-spacing: 0.1px;
-      margin-bottom: -2px;
+      font-size: 1em;
+      font-weight: 600;
+      margin: 0;
     }
     .fecha-entrega {
-      margin: 5px 0 13px 7px;
-      font-weight: 600;
-      font-size: 0.97em;
-      color: #222;
+      font-size: 0.75em;
+      color: #000;
+      font-weight: 500;
+      white-space: nowrap;
     }
+    /* Buscador integrado en toolbar */
     .buscador-container {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 5px;
-      width: 99vw;
-      max-width: 470px;
-      margin: 0 7px 13px 7px;
+      gap: 4px;
+      margin-left: 8px;
     }
     input[type="text"].buscador-principal {
-      font-size: 13.8px;
-      padding: 9px 11px 9px 13px;
-      border: 1.6px solid #edcdcf;
-      border-radius: 13px 0 0 13px;
-      width: 74vw;
-      max-width:340px;
-      background: #fbf8fa;
-      box-sizing: border-box;
+      font-size: 13px;
+      padding: 5px 8px;
+      border: 1.2px solid #bbb;
+      border-radius: 6px;
+      width: 180px;
+      background: #fff;
       outline: none;
-      margin-right: 0;
-      transition: border 0.1s;
     }
     input[type="text"].buscador-principal:focus {
-      border: 1.6px solid #e95567;
-      background: #fff8fa;
+      border-color: #e95567;
     }
     .buscador-container button {
-      font-size: 13.4px;
-      padding: 8.8px 17px 8.8px 13px;
+      font-size: 12px;
+      padding: 5px 10px;
       color: white;
       background: #f2828e;
       border: none;
-      border-radius: 0 13px 13px 0;
+      border-radius: 6px;
       cursor: pointer;
-      font-family: Calibri, Arial, sans-serif;
-      box-shadow: 0 0 2.1px #dc5e5e91;
       font-weight: 600;
-      height: 39px;
-      min-width: 105px;
-      letter-spacing: 0.3px;
-      margin-left: -3px;
-      transition: background 0.17s;
     }
-    .buscador-container button:active, .buscador-container button:focus {
+    .buscador-container button:active {
       background: #e64d5b;
     }
+    /* === CONTENIDO PRINCIPAL === */
     .agenda-scroll-x {
       overflow-x: auto;
       width: 100vw;
-      margin: 0 1px;
-      margin-bottom: 24px;
+      margin: 0;
+      margin-top: 56px; /* margen para dejar espacio al header fijo */
+      padding: 0 4px;
     }
     table {
       border-collapse: collapse;
-      margin: 0;
+      margin: 0 auto;
       width: 1080px;
       min-width: 740px;
       background: #fff;
-      border-radius: 10px;
-      font-family: Calibri, Arial, sans-serif;
+      border-radius: 8px;
     }
     th, td {
       text-align: left;
       font-size: 12px;
-      padding: 7px 8px 7px 7px;
+      padding: 6px 8px;
       border-bottom: 1.2px solid #f7e1e2;
       max-width: 280px;
       overflow-wrap: break-word;
@@ -141,64 +103,42 @@
     th {
       background: #f8c6c6;
       color: #403535;
-      font-size: 13.4px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.44px;
       border-bottom: 2.5px solid #e05d56;
       position: sticky;
       top: 0;
       z-index: 1;
-      box-shadow: 0 2px 8px -5px #ee7575d1;
-    }
-    tr:active, tr.resaltado, tr.selected-row {
-      background: #f2eaeb !important;
-      transition: background 0.12s;
     }
     tr:hover { background: #fff2f7; }
+    tr.resaltado { background: #f2eaeb !important; }
     a {
       color: #99034f;
       text-decoration: underline;
       word-break: break-all;
     }
-    @media (max-width: 770px) {
-      table { min-width:630px; font-size:10.6px; }
-      th, td { font-size:11px;}
-      .logo-outer { width:48px; height:48px;}
-      .logo-circle { width:44px; height:44px;}
-      .logo-circle img { width:28px; height:28px;}
-    }
-    @media (max-width:600px) {
-      .header-block { margin:23px 3px 0 2px;}
-      .fecha-entrega {margin-left:2px;}
-      .header-title {font-size:1em;}
-      .logo-outer{width:32px;height:32px;}
-      .logo-circle{width:30px; height:30px;}
-      .logo-circle img{width:20px;height:20px;}
-      .buscador-container{max-width:100vw; margin-left:0;}
-      .buscador-container input{ font-size:10.8px; max-width:60vw;}
-      .buscador-container button{font-size:10.1px; padding:7px 10px; height:35px;}
-      th, td { font-size:9.3px;}
-      .agenda-scroll-x{margin:0;}
+    @media (max-width: 700px) {
+      .header-toolbar { flex-direction: column; height: auto; align-items: flex-start; gap: 4px; }
+      .buscador-container { width: 100%; }
+      .buscador-container input { width: 100%; max-width: 100%; }
+      .agenda-scroll-x { margin-top: 78px; }
     }
   </style>
 </head>
 <body>
-  <div class="header-block">
-    <div class="logo-outer">
-      <div class="logo-circle">
-        <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo">
-      </div>
-    </div>
-    <div>
+  <div class="header-toolbar">
+    <div class="header-left">
+      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo" class="header-logo">
       <div class="header-title">Agenda Maptrack v4</div>
-      <div class="fecha-entrega" id="fecha-entrega"></div>
     </div>
+    <div class="buscador-container">
+      <input type="text" id="buscador-principal" class="buscador-principal"
+        placeholder="Buscar en agenda..." oninput="onGlobalSearchInput()">
+      <button onclick="nuevaBusqueda()">Nueva</button>
+    </div>
+    <div class="fecha-entrega" id="fecha-entrega"></div>
   </div>
-  <div class="buscador-container">
-    <input type="text" id="buscador-principal" class="buscador-principal"
-      placeholder="Buscar en toda la agenda..." oninput="onGlobalSearchInput()">
-    <button onclick="nuevaBusqueda()">Nueva búsqueda</button>
-  </div>
+
   <div class="agenda-scroll-x">
     <table id="agenda-table">
       <thead>
@@ -215,6 +155,7 @@
       <tbody></tbody>
     </table>
   </div>
+
 <script>
 const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
 let dataRows = [];
@@ -274,26 +215,19 @@ function loadCSV() {
       }
       const headers = Object.keys(rows[0]);
       const colC = matchCabecera(['Vehicle Key/Placa', 'Placa'], headers);
-      const colD = matchCabecera(['Customer Account # / Cliente', 'Cliente', 'Account', 'Cuenta'], headers);
-      const colE = matchCabecera(['Customer Name/Solic', 'Solicitante', 'Solic'], headers);
-      const colF = matchCabecera(['Customer Name2', 'Solicitante 2', 'Solic2'], headers);
-      const colG = matchCabecera(['RUTA VENTA', 'Ruta Venta', 'Ruta'], headers);
-      let colM = matchCabecera(['Asignación', 'Asignacion', 'Asignación'], headers, true);
-      if(!colM){
-        colM = headers.find(h => h.toLowerCase().includes('asign'));
-      }
-      if(!colM){console.warn('Ninguna columna de Asignación encontrada en el CSV');}
-      else {console.log('Columna Asignación detectada:', colM);}
-      const telefonoCols = headers.filter(h => {
-        const norm = h.toLowerCase().replace(/[\u0300-\u036f]/g, '');
-        return /\btel(e?fono)?\b/.test(norm);
-      });
-      const colP = matchCabecera(['Address', 'Dirección', 'Direccion'], headers);
+      const colD = matchCabecera(['Customer Account # / Cliente', 'Cliente'], headers);
+      const colE = matchCabecera(['Customer Name/Solic', 'Solicitante'], headers);
+      const colF = matchCabecera(['Customer Name2'], headers);
+      const colG = matchCabecera(['RUTA VENTA', 'Ruta Venta'], headers);
+      let colM = matchCabecera(['Asignación', 'Asignacion'], headers, true);
+      if(!colM) colM = headers.find(h => h.toLowerCase().includes('asign'));
+      const telefonoCols = headers.filter(h => h.toLowerCase().includes('tel'));
+      const colP = matchCabecera(['Address', 'Dirección'], headers);
       const colO = matchCabecera(['City', 'Ciudad'], headers);
-      const colH = matchCabecera(['#Pedido/Doc comer', 'Pedido', '#Pedido', 'Doc'], headers);
-      const colA = matchCabecera(['Fecha de Entrega', 'Fecha Entrega', 'Entrega'], headers);
-      const colQ = matchCabecera(['Latitude', 'Latitud'], headers);
-      const colR = matchCabecera(['Longitude', 'Longitud'], headers);
+      const colH = matchCabecera(['#Pedido', 'Pedido'], headers);
+      const colA = matchCabecera(['Fecha de Entrega'], headers);
+      const colQ = matchCabecera(['Latitude','Latitud'], headers);
+      const colR = matchCabecera(['Longitude','Longitud'], headers);
 
       dataRows = getUnique(rows.map(row => {
         let E = safeField(row, [colE]);
@@ -320,7 +254,6 @@ function loadCSV() {
           Pedido: safeField(row, [colH]),
         };
       }));
-      if (dataRows.length > 0) console.log("Ejemplo de fila procesada:", dataRows[0]);
       mostrarFechaEntrega(dataRows);
       renderTable();
     }
@@ -387,14 +320,14 @@ function renderTable() {
 }
 
 function mostrarFechaEntrega(rows) {
-  let fechas = rows.map(r => r.FechaEntrega).filter(f => f && f !== '00/00/0000' && f !== '0/0/0000');
+  let fechas = rows.map(r => r.FechaEntrega).filter(f => f);
   fechas.sort((a, b) => {
     let [da, ma, aa] = a.split('/').map(Number), [db, mb, ab] = b.split('/').map(Number);
     let dA = new Date(aa, ma - 1, da), dB = new Date(ab, mb - 1, db);
     return dA - dB;
   });
   let fechaMostrar = fechas.length ? fechas[0] : '';
-  let textoFecha = fechaMostrar ? `Fecha de entrega: ${fechaMostrar}` : '';
+  let textoFecha = fechaMostrar ? `Entrega: ${fechaMostrar}` : '';
   document.getElementById('fecha-entrega').textContent = textoFecha;
 }
 
