@@ -85,8 +85,8 @@
       overflow-x: auto;
       width: 100vw;
       margin: 0;
-      /* Espacio debajo del header fijo para escritorio/tablet */
-      margin-top: 60px;
+      /* Más espacio para escritorio/tablet para que el header nunca tape la tabla */
+      margin-top: 90px;
       padding: 0 2px;
     }
     table {
@@ -128,7 +128,8 @@
     @media (max-width: 700px) {
       .header-toolbar { flex-direction: column; height: auto; align-items: flex-start; gap: 4px; }
       .buscador-container { width: 100%; margin: 8px 0; max-width: 100%; }
-      .agenda-scroll-x { margin-top: 110px; }  /* Más espacio por header doble línea */
+      /* Mucho más espacio para header de varias líneas en móvil */
+      .agenda-scroll-x { margin-top: 140px; }
       .fecha-entrega { margin: 4px 0 0; }
       table { min-width: 550px; }
       th, td { font-size: 11px; padding: 5px 5px; max-width: 80px; }
