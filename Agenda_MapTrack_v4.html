@@ -80,6 +80,58 @@
       margin-left: auto;
       padding-left: 10px;
     }
+    /* Switch button styles */
+    .zona-switch-row {
+      display: flex; 
+      align-items: center; 
+      gap: 0.5em;
+      margin-right: 16px;
+      min-width: 260px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      vertical-align: middle;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    #zonaIdentificador {
+      font-weight: bold;
+      font-size: 1em;
+      color: #095;
+      min-width: 110px;
+      display: inline-block;
+    }
     /* === CONTENIDO PRINCIPAL === */
     .agenda-scroll-x {
       overflow-x: auto;
@@ -128,8 +180,9 @@
     @media (max-width: 700px) {
       .header-toolbar { flex-direction: column; height: auto; align-items: flex-start; gap: 4px; }
       .buscador-container { width: 100%; margin: 8px 0; max-width: 100%; }
+      .zona-switch-row { margin: 4px 0; min-width: 190px; }
       /* Mucho más espacio para header de varias líneas en móvil */
-      .agenda-scroll-x { margin-top: 140px; }
+      .agenda-scroll-x { margin-top: 160px; }
       .fecha-entrega { margin: 4px 0 0; }
       table { min-width: 550px; }
       th, td { font-size: 11px; padding: 5px 5px; max-width: 80px; }
@@ -140,6 +193,14 @@
   <div class="header-toolbar">
     <div class="header-left">
       <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo" class="header-logo">
+      <div class="zona-switch-row">
+        <label for="zonaSwitch" style="color:#036;font-weight:500;">Zona:</label>
+        <label class="switch">
+          <input type="checkbox" id="zonaSwitch" checked>
+          <span class="slider round"></span>
+        </label>
+        <span id="zonaIdentificador">Cadi Chorrillos</span>
+      </div>
     </div>
     <div class="buscador-container">
       <div class="search-box">
@@ -171,6 +232,8 @@
 const CSV_URL = 'https://corsproxy.io/?https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
 let dataRows = [];
 let buscadorGlobal = '';
+let dataRowsRaw = [];
+let COL_CONSIDERA = null;
 
 function toDDMMYYYY(fechaStr) {
   if (!fechaStr) return '';
@@ -213,6 +276,7 @@ function safeField(row, keys) {
   return '';
 }
 
+// Guarda los datos originales y filtra por zona después
 function loadCSV() {
   Papa.parse(CSV_URL, {
     download: true,
@@ -225,6 +289,8 @@ function loadCSV() {
         return;
       }
       const headers = Object.keys(rows[0]);
+      COL_CONSIDERA = matchCabecera(['Considera'], headers);
+
       const colC = matchCabecera(['Vehicle Key/Placa', 'Placa'], headers);
       const colD = matchCabecera(['Customer Account # / Cliente', 'Cliente'], headers);
       const colE = matchCabecera(['Customer Name/Solic', 'Solicitante'], headers);
@@ -240,7 +306,8 @@ function loadCSV() {
       const colQ = matchCabecera(['Latitude','Latitud'], headers);
       const colR = matchCabecera(['Longitude','Longitud'], headers);
 
-      dataRows = getUnique(rows.map(row => {
+      // Guardar datos originales sin filtro
+      dataRowsRaw = rows.map(row => {
         let E = safeField(row, [colE]);
         let F = safeField(row, [colF]);
         let fullSolic = (F && !['0', '#N/A', '(blank)', '', ' '].includes(F)) ? `${E} - ${F}` : E;
@@ -254,6 +321,7 @@ function loadCSV() {
         let M = safeField(row, [colM]);
         let N = safeField(row, telefonoCols);
         return {
+          raw: row,
           Cliente: safeField(row, [colD]),
           Solicitante: fullSolic,
           RutaVenta: safeField(row, [colG]),
@@ -263,12 +331,29 @@ function loadCSV() {
           Direccion: mapLink,
           FechaEntrega: fecha,
           Pedido: safeField(row, [colH]),
+          Considera: COL_CONSIDERA ? row[COL_CONSIDERA] : ''
         };
-      }));
-      mostrarFechaEntrega(dataRows);
-      renderTable();
+      });
+
+      filtrarZonaYRender();
     }
   });
+}
+
+// Toma en cuenta el filtro zona para mostrar solo las filas solicitadas
+function filtrarZonaYRender() {
+  const zonaChecked = document.getElementById('zonaSwitch').checked;
+  // Cadi Chorrillos: Considera = 0752 | Cedí Ate: el resto
+  if(zonaChecked) {
+    // Solo mostrar Chorrillos
+    dataRows = getUnique(dataRowsRaw.filter(r => r.Considera && r.Considera.trim() === '0752'));
+  } else {
+    // Solo mostrar Ate
+    dataRows = getUnique(dataRowsRaw.filter(r => r.Considera && r.Considera.trim() !== '0752'));
+  }
+  mostrarFechaEntrega(dataRows);
+  renderTable();
+  actualizarIdentificadorZona();
 }
 
 function getUnique(arr) {
@@ -342,7 +427,21 @@ function mostrarFechaEntrega(rows) {
   document.getElementById('fecha-entrega').textContent = textoFecha;
 }
 
-window.onload = loadCSV;
+// Cambia el texto del identificador de zona
+function actualizarIdentificadorZona(){
+  const chk = document.getElementById("zonaSwitch");
+  const txt = chk.checked ? "Cadi Chorrillos" : "Cedí Ate";
+  const color = chk.checked ? "#095" : "#b33";
+  document.getElementById("zonaIdentificador").textContent = txt;
+  document.getElementById("zonaIdentificador").style.color = color;
+}
+
+// Listeners de la zona
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('zonaSwitch').addEventListener('change', filtrarZonaYRender);
+  loadCSV();
+});
+
 </script>
 </body>
 </html>
