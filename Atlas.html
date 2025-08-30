@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MapTrack | Atlas</title>
+  <title>MapTrack Integrado</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -28,6 +28,16 @@
     input:checked + .slider:before {transform: translateX(13px);}
     #zonaIdentificador {font-weight: bold; font-size: 1em; min-width: 102px; margin-left: 3px; color: #095;}
     .fecha-entrega {font-size: 0.99em; color: #222; font-weight: 600;}
+    .header-spacer { flex: 1; }
+    .telegram-link {
+      display: flex; align-items: center; margin-left: 10px; text-decoration: none;
+      transition: filter 0.2s;
+    }
+    .telegram-link:hover { filter: brightness(1.16); }
+    .telegram-icon {
+      width: 24px; height: 24px; margin-top: 1px;
+      display: block;
+    }
     .main-area { display: flex; height: calc(100vh - 44px);}
     .tabs-vertical { display: flex; flex-direction: column; gap: 1px;
       min-width: 76px; background: #f6fafe; border-right: 1px solid #cde7f7; padding-top: 9px;
@@ -92,6 +102,7 @@
       #map { min-height: 32vh; height: 29vh;}
       th, td { font-size: 8px; padding: 2px 2px;}
       .filters-mapa label,.filters-mapa select,.search-box input,.search-box button {font-size:9px;}
+      .telegram-icon{width:19px; height:19px;}
     }
   </style>
 </head>
@@ -107,6 +118,12 @@
       <span id="zonaIdentificador">Cadi Chorrillos</span>
     </div>
     <span class="fecha-entrega" id="fecha-entrega"></span>
+    <span class="header-spacer"></span>
+    <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener noreferrer" title="Abrir bot MapTrack en Telegram" class="telegram-link">
+      <!-- Icono Telegram SVG vectorial -->
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg"
+           class="telegram-icon" alt="Telegram" style="filter: drop-shadow(0 0 1px #018cc7);">
+    </a>
   </div>
   <div class="main-area">
     <div class="tabs-vertical">
@@ -144,6 +161,7 @@
       </div>
     </div>
   </div>
+<!-- ... tu script JS es exactamente igual que antes ... -->
 <script>
 const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
 let rawData=[], dataRowsRaw=[], dataRows=[];
@@ -174,7 +192,6 @@ function actualizarIdentificadorZona(){
 function showEntrega(fecha) {
   document.getElementById("fecha-entrega").textContent = fecha?("Entrega: "+fecha):"";
 }
-// MAPA
 let map, mapaIniciado = false, markers=[];
 function getColorForString(str,total) {
   let hash=0;
@@ -183,7 +200,6 @@ function getColorForString(str,total) {
   return `hsl(${Math.round(hue*(360/total))},75%,49%)`;
 }
 function makeCustomMarker(color){
-  // Más pequeño
   const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);
   return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
 }
@@ -229,7 +245,6 @@ function plotMarkers(data){
     mk.addTo(map);
     markers.push(mk);
   });
-  // Siempre ajusta vista al cambiar placa y cliente/filtros
   setTimeout(()=>{
     if(bounds.length > 0) {
       if(bounds.length === 1){
@@ -355,7 +370,6 @@ window.nuevaBusqueda = function () {
   renderTable();
 };
 document.getElementById('zonaSwitch').addEventListener('change', filtrarZonaYRender);
-// Cambia la pestaña: ahora Agenda es default y el mapa solo se inicializa la PRIMERA vez que seleccionas Planos
 window.switchTab = function(tab) {
   document.getElementById('tab-mapa').classList.remove('active');
   document.getElementById('tab-agenda').classList.remove('active');
