@@ -2,15 +2,19 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MapTrack - Atlas</title>
+  <title>MapTrack Integrado</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
-  <meta name="theme-color" content="#e8f3fb"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; }
     .header-row {
-      display: flex; align-items: center; gap: 8px; background: #e8f3fb; border-bottom: 1px solid #cde7f7;
-      height: 44px; padding: 0 8px; position: sticky; top: 0; z-index: 999; font-size: 0.97em;
+      display: flex; align-items: center; gap: 8px;
+      background: #e8f3fb; border-bottom: 1px solid #cde7f7;
+      height: 44px; padding: 0 12px;
+      position: sticky; top: 0; z-index: 999; font-size: 0.97em;
     }
     .header-logo { width: 23px; height: 23px; border-radius: 50%; border: 1px solid #cceeff; }
     .zona-switch-row { display: flex; align-items: center; gap: 5px; }
@@ -22,79 +26,83 @@
       background: white; transition: .4s; border-radius: 50%;}
     input:checked + .slider { background-color: #2196F3;}
     input:checked + .slider:before {transform: translateX(13px);}
-    #zonaIdentificador {font-weight: bold; font-size: 1em; min-width: 94px; margin-left: 3px; color: #095;}
+    #zonaIdentificador {font-weight: bold; font-size: 1em; min-width: 102px; margin-left: 3px; color: #095;}
     .fecha-entrega {font-size: 0.99em; color: #222; font-weight: 600;}
-    .agenda-menu { display: flex; margin-top: 7px; align-items: flex-end; gap: 6px; }
-    .tab-btn {
-      padding: 7px 15px 6px 15px; border: none; border-radius: 7px 7px 0 0;
-      background: #f9f9f9; color: #e95567; font-weight: bold; font-size: 15px;
-      cursor: pointer; transition: background 0.15s, color 0.17s;
-      border-bottom: 3px solid transparent;
-      outline: none;
+    .header-spacer { flex: 1; }
+    .telegram-link {
+      display: flex; align-items: center; margin-left: 10px; text-decoration: none;
+      transition: filter 0.2s;
     }
-    .tab-btn.inactive { color: #036; font-weight: 500; background: #f4f6fc; }
-    .tab-btn.active { background: #fff; border-bottom: 3px solid #e95567;}
-    .btn-nueva { margin-left: auto; background: #ffeef4; color: #e95567; font-weight: 700;
-      border:1px solid #fdc2d3; border-radius: 6px; padding: 5px 18px; font-size: 13px; cursor: pointer; }
-    .btn-nueva:hover { background: #fff2fa; color: #f01762; }
-    .buscador-container { display: flex; align-items: center; max-width: 420px; gap: 5px; margin-bottom: 8px;}
-    .search-box { display: flex; align-items: center; background: #fff; border: 1.2px solid #c8c8e3; border-radius: 7px; overflow: hidden; width: 100%; }
-    .search-box input { flex: 1; font-size: 12.5px; padding: 6px 7px; border: none; outline: none; background: transparent;}
-    .search-box button { font-size: 12.5px; padding: 6px 12px; color: white; background: linear-gradient(135deg,#ff6c80,#e95567); border: none; cursor: pointer; font-weight: 600; border-left: 1px solid #ddd; border-radius: 0 7px 7px 0;}
-    .agenda-scroll-x { overflow-x: auto; margin-top: 0; width: 100%; }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 520px;
-      background: #fff;
-      border-radius: 7px;
-      font-size: 14px;
-      box-shadow: 0 2px 8px #e9f5fc16;
-      margin-bottom: 9px;
+    .telegram-link:hover { filter: brightness(1.16); }
+    .telegram-icon {
+      width: 24px; height: 24px; margin-top: 1px;
+      display: block;
     }
-    th, td {
-      text-align: left;
-      padding: 7px 4px 7px 4px;
-      word-break: break-word;
-      white-space: pre-line;
-      border-bottom: 1px solid #ebdde6;
-      max-width: 160px;
-      vertical-align: top;
+    .main-area { display: flex; height: calc(100vh - 44px);}
+    .tabs-vertical { display: flex; flex-direction: column; gap: 1px;
+      min-width: 76px; background: #f6fafe; border-right: 1px solid #cde7f7; padding-top: 9px;
     }
-    th {
-      background: #facfd6;
+    .tab-btn { padding: 7px 2px 7px 14px; border: none; border-radius: 9px 0 0 9px;
+      background:transparent; color: #035b7c; font-size: 13px; 
+      cursor: pointer; font-weight: 500; transition: background 0.14s; margin-bottom: 1px; text-align: left; outline: none;
+      border-right: 2px solid transparent;
+    }
+    .tab-btn.active { background: #fff; color: #e95567; border-right: 2px solid #e95567; font-weight: 700;}
+    .tabs-content-main { flex: 1; padding: 10px 6px 5px 15px; }
+    .tab-content { display: none; height: 100%; }
+    .tab-content.active { display: block; height: 100%; }
+    .filters-mapa {
+      display: flex; gap: 10px; margin-bottom: 12px; align-items: center;
+      background: #f6f7ff; border-radius: 6px; padding: 5px 9px;
+      border: 1px solid #e2e3e6;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 10.5px;
+    }
+    .filters-mapa label, .filters-mapa select {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 10.5px;
+      font-weight: 500;
       color: #403535;
-      font-weight: 700;
-      font-size: 14.2px;
-      position: sticky;
-      top: 0;
-      z-index: 2;
+      margin-right: 3px;
     }
-    tr:nth-child(even) td { background: #f7fbfc; }
-    tr:hover td { background: #fff2f7 !important;}
-    tr.resaltado td { background: #ffd5ea !important;}
-    td a {
-      color: #0a77d9;
-      font-weight: 600;
-      word-break: break-all;
-      text-decoration: underline;
-      font-size: 13.6px;
+    .filters-mapa select {
+      padding: 3px 7px; border: 1px solid #bcd9ff; border-radius: 4px; background: #fff;
+      min-width: 82px;
     }
-    @media (max-width: 800px) {
-      table, th, td {
-        font-size: 12.4px;
-        max-width: 96px;
-        padding: 6px 2.5px 6px 2.5px;
-      }
-      .agenda-menu { gap: 3px; }
-      .btn-nueva { font-size: 12px; padding: 4px 10px;}
+    #map {
+      width: 100%;
+      min-height: 95vh;
+      height: 93vh;
+      max-height: 99vh;
+      border-radius: 12px;
+      border: 1.2px solid #cceeff;
+      margin-top: 7px;
+      background: #e9f6fb55;
+      box-sizing: border-box;
     }
-    @media (max-width: 520px) {
-      th, td { font-size: 10.7px; max-width: 68px; padding: 3px 1px;}
-      .btn-nueva { font-size: 10.5px; padding: 3.8px 5px;}
-      .tab-btn { font-size: 13px; padding: 6px 6px 6px 6px;}
-      .search-box input,.search-box button {font-size:10px;}
-      td a { font-size: 10.8px;}
+    .buscador-container { display: flex; align-items: center; max-width: 285px; gap: 4px; margin-bottom: 6px;}
+    .search-box { display: flex; align-items: center; background: #fff; border: 1px solid #bbe; border-radius: 6px; overflow: hidden; width: 100%;}
+    .search-box input { flex: 1; font-size: 10.5px; padding: 4px 5px; border: none; outline: none; background: transparent;}
+    .search-box button { font-size: 10.5px; padding: 4px 7px; color: white; background: linear-gradient(135deg,#ff6c80,#e95567); border: none; cursor: pointer; font-weight: 600; border-left: 1px solid #ddd;
+      border-radius: 0 6px 6px 0;}
+    .agenda-scroll-x { overflow-x: auto;}
+    table { border-collapse: collapse; margin: 0 auto; width: 100%; min-width: 180px; background: #fff; border-radius: 6px; font-size: 10.5px;}
+    th, td { text-align: left; font-size: 10.5px; padding: 3px 4px; border-bottom: 1px solid #ebdde6; max-width: 76px; word-break: break-word; white-space: normal;}
+    th { background: #f8c6c6; color: #403535; font-weight: 600; }
+    tr:hover { background: #fff2f7;}
+    tr.resaltado { background: #f2eaeb !important;}
+    @media (max-width: 670px) {
+      .main-area { flex-direction: column;}
+      .tabs-vertical { flex-direction: row; padding-top: 0; min-width: 0;}
+      .tab-btn { border-radius: 8px 8px 0 0; margin-bottom: 0; margin-right: 1.5px;}
+      .tabs-content-main { padding-left: 2px;}
+      #map { min-height: 44vh; height: 39vh;}
+    }
+    @media (max-width: 480px) {
+      #map { min-height: 32vh; height: 29vh;}
+      th, td { font-size: 8px; padding: 2px 2px;}
+      .filters-mapa label,.filters-mapa select,.search-box input,.search-box button {font-size:9px;}
+      .telegram-icon{width:19px; height:19px;}
     }
   </style>
 </head>
@@ -110,39 +118,59 @@
       <span id="zonaIdentificador">Cadi Chorrillos</span>
     </div>
     <span class="fecha-entrega" id="fecha-entrega"></span>
+    <span class="header-spacer"></span>
+    <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener noreferrer" title="Abrir bot MapTrack en Telegram" class="telegram-link">
+      <!-- Icono Telegram SVG vectorial -->
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg"
+           class="telegram-icon" alt="Telegram" style="filter: drop-shadow(0 0 1px #018cc7);">
+    </a>
   </div>
-  <div class="agenda-menu">
-    <button class="tab-btn active" id="btnAgenda">Agenda</button>
-    <button class="tab-btn inactive" id="btnMapa">Planos</button>
-    <button class="btn-nueva" onclick="nuevaBusqueda()">Nueva</button>
-  </div>
-  <div class="buscador-container">
-    <div class="search-box">
-      <input type="text" id="buscador-principal" placeholder="Buscar en agenda..." oninput="onGlobalSearchInput()"/>
-      <button onclick="nuevaBusqueda()">Nueva</button>
+  <div class="main-area">
+    <div class="tabs-vertical">
+      <button class="tab-btn active" id="btnAgenda" onclick="switchTab('agenda')">Agenda</button>
+      <button class="tab-btn" id="btnMapa" onclick="switchTab('mapa')">Planos</button>
+    </div>
+    <div class="tabs-content-main">
+      <div id="tab-agenda" class="tab-content active">
+        <div class="buscador-container">
+          <div class="search-box">
+            <input type="text" id="buscador-principal" placeholder="Buscar en agenda..." oninput="onGlobalSearchInput()">
+            <button onclick="nuevaBusqueda()">Nueva</button>
+          </div>
+        </div>
+        <div class="agenda-scroll-x">
+          <table id="agenda-table">
+            <thead>
+              <tr>
+                <th>Cliente</th><th>Solicitante</th><th>Ruta<br>Venta</th>
+                <th>Placa</th><th>Asignación</th><th>Teléfono</th><th>Dirección</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="tab-mapa" class="tab-content">
+        <div class="filters-mapa">
+          <label for="placa">Placa:</label>
+          <select id="placa"></select>
+          <label for="cliente">Cliente:</label>
+          <select id="cliente"></select>
+        </div>
+        <div id="map"></div>
+      </div>
     </div>
   </div>
-  <div class="agenda-scroll-x">
-    <table id="agenda-table">
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Solicitante</th>
-          <th>Ruta Venta</th>
-          <th>Placa</th>
-          <th>Asignación</th>
-          <th>Teléfono</th>
-          <th>Dirección</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- ... tu script JS es exactamente igual que antes ... -->
 <script>
 const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
-let dataRows=[];
+let rawData=[], dataRowsRaw=[], dataRows=[];
 let buscadorGlobal = '';
+const COL_PLACA = 'Vehicle Key/Placa', COL_CODIGO_CLIENTE = 'Customer Account # / Cliente',
+      COL_NOMBRE_CLIENTE = 'Customer Name/Solic', COL_ERROR = 'Customer Name2',
+      COL_CITY = 'City', COL_ADDRESS = 'Address', COL_FECHA = 'Fecha de Entrega',
+      COL_CONSIDERA = 'Considera', COL_LAT = 'Latitude', COL_LNG = 'Longitude';
+
 function toDDMMYYYY(fechaStr) {
   if (!fechaStr) return '';
   if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
@@ -153,6 +181,174 @@ function toDDMMYYYY(fechaStr) {
   if (p3 && p3.length===4){let d=parseInt(p1),m=parseInt(p2),y=parseInt(p3); if(m>12)[d,m]=[m,d];
     return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;}
   return fechaStr;
+}
+function actualizarIdentificadorZona(){
+  const chk = document.getElementById("zonaSwitch");
+  const txt = chk.checked ? "Cadi Chorrillos" : "Cedí Ate";
+  const color = chk.checked ? "#095" : "#b33";
+  document.getElementById("zonaIdentificador").textContent = txt;
+  document.getElementById("zonaIdentificador").style.color = color;
+}
+function showEntrega(fecha) {
+  document.getElementById("fecha-entrega").textContent = fecha?("Entrega: "+fecha):"";
+}
+let map, mapaIniciado = false, markers=[];
+function getColorForString(str,total) {
+  let hash=0;
+  for(let i=0;i<str.length;i++){ hash=str.charCodeAt(i)+((hash<<5)-hash);}
+  const hue=Math.abs(hash)%total;
+  return `hsl(${Math.round(hue*(360/total))},75%,49%)`;
+}
+function makeCustomMarker(color){
+  const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);
+  return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
+}
+function getVisited() {
+  try{ return JSON.parse(localStorage.getItem('visitedPoints_MapTrack')||'{}') }catch{return {}}
+}
+function setVisited(obj){ localStorage.setItem('visitedPoints_MapTrack',JSON.stringify(obj)) }
+function getUniqueId(row){ return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}` }
+function uniqueBy(arr,keys){
+  const seen={}; return arr.filter(row=>{ const key=keys.map(k=>row[k]).join('|'); if(seen[key]) return false; seen[key]=true; return true; });
+}
+function plotMarkers(data){
+  markers.forEach(m=>map.removeLayer(m));
+  markers=[];
+  let bounds = [];
+  const clientes=[...new Set(data.map(r=>r[COL_NOMBRE_CLIENTE]))];
+  const colores={};
+  clientes.forEach((c,i)=>{colores[c]=getColorForString(c,clientes.length+2)});
+  const visited=getVisited();
+  data.forEach(row=>{
+    const lat=parseFloat(row[COL_LAT]),lng=parseFloat(row[COL_LNG]);
+    if(!lat||!lng) return;
+    bounds.push([lat, lng]);
+    let cliente=row[COL_NOMBRE_CLIENTE];
+    const com=row[COL_ERROR];
+    if(com&&!(["","error","(blank)","(blanco)"].includes(com.trim().toLowerCase())))
+      cliente+=` (${com})`;
+    const gmaps=`https://www.google.com/maps?q=${lat},${lng}`;
+    const pointId=getUniqueId(row);
+    const checked=visited[pointId]?"checked":"";
+    const color=visited[pointId]?"#fff":colores[row[COL_NOMBRE_CLIENTE]];
+    const popup=`<div style="font-size:12px;"><a href="${gmaps}" target="_blank" style="color:${colores[row[COL_NOMBRE_CLIENTE]]};font-weight:bold;">${cliente}</a><br>${row[COL_ADDRESS]} - ${row[COL_CITY]}<br><label style="font-size:0.94em;"><input type="checkbox" id="v_${pointId}" ${checked}> Visitado</label></div>`;
+    const mk=L.marker([lat,lng],{icon:makeCustomMarker(color)}).bindPopup(popup);
+    mk.on("popupopen",()=>{
+      const cb=document.getElementById("v_"+pointId);
+      if(cb) cb.addEventListener("change",()=>{
+        let v=getVisited();
+        if(cb.checked){v[pointId]=true;}else delete v[pointId];
+        setVisited(v);
+        mk.setIcon(makeCustomMarker(cb.checked?"#fff":colores[row[COL_NOMBRE_CLIENTE]]));
+      });
+    });
+    mk.addTo(map);
+    markers.push(mk);
+  });
+  setTimeout(()=>{
+    if(bounds.length > 0) {
+      if(bounds.length === 1){
+        map.setView(bounds[0], 17);
+      } else {
+        const limit = L.latLngBounds(bounds);
+        map.fitBounds(limit.pad(0.24));
+      }
+    }
+  }, 120);
+}
+function filtrarClientes(placa, consideraFilter){
+  const set=new Set();
+  rawData.filter(r=>{
+    if(consideraFilter){
+      if(r[COL_CONSIDERA] !== consideraFilter) return false;
+    } else {
+      if(r[COL_CONSIDERA] === "0752") return false;
+    }
+    return r[COL_PLACA]===placa;
+  }).forEach(r=>set.add(r[COL_NOMBRE_CLIENTE]));
+  const sel=document.getElementById("cliente");
+  sel.innerHTML='<option value="">Todos</option>'+[...set].sort().map(c=>`<option>${c}</option>`).join('');
+}
+function filtrar(){
+  const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
+  let placa=document.getElementById("placa").value, cliente=document.getElementById("cliente").value;
+  let data=rawData.filter(r=>{
+    if(consideraFilter){
+      if(r[COL_CONSIDERA] !== consideraFilter) return false;
+    } else {
+      if(r[COL_CONSIDERA] === "0752") return false;
+    }
+    return r[COL_PLACA] === placa;
+  });
+  if(cliente) data=data.filter(r=>r[COL_NOMBRE_CLIENTE]===cliente);
+  data=uniqueBy(data,[COL_PLACA,COL_CODIGO_CLIENTE]);
+  plotMarkers(data);
+  let fecha=data.length?toDDMMYYYY(data[0][COL_FECHA]):"";
+  showEntrega(fecha);
+}
+function safeField(row, keys) {
+  for (let k of keys) {
+    if (row[k] !== undefined && (row[k] + '').trim() !== '') return (row[k] + '').trim();
+  }
+  return '';
+}
+function filtrarZonaYRender() {
+  const zonaChecked = document.getElementById('zonaSwitch').checked;
+  if(zonaChecked) {
+    dataRows = getUnique(dataRowsRaw.filter(r => r.Considera && r.Considera.trim() === '0752'));
+  } else {
+    dataRows = getUnique(dataRowsRaw.filter(r => r.Considera && r.Considera.trim() !== '0752'));
+  }
+  mostrarFechaEntrega(dataRows);
+  renderTable();
+  actualizarIdentificadorZona();
+  if(mapaIniciado) cargarFiltrosMapa();
+}
+function getUnique(arr) {
+  const seen = new Set();
+  return arr.filter(row => {
+    const key = [
+      row.Cliente, row.Solicitante, row.RutaVenta,
+      row.Placa, row.Asignacion, row.Telefono, row.Direccion
+    ].join('|').toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function mostrarFechaEntrega(rows) {
+  let fechas = [...new Set(rows.map(r => r.FechaEntrega).filter(f => f))];
+  fechas.sort((a, b) => {
+    let [da, ma, aa] = a.split('/').map(Number), [db, mb, ab] = b.split('/').map(Number);
+    let dA = new Date(aa, ma - 1, da), dB = new Date(ab, mb - 1, db);
+    return dA - dB;
+  });
+  let fechaMostrar = fechas.length ? fechas[0] : '';
+  let textoFecha = fechaMostrar ? fechaMostrar : '';
+  document.getElementById('fecha-entrega').textContent = textoFecha ? `Entrega: ${textoFecha}` : '';
+}
+function renderTable() {
+  let tbody = document.querySelector('#agenda-table tbody');
+  let fragment = document.createDocumentFragment();
+  let rowsShow = dataRows.filter(row => match(row));
+  for (let i = 0; i < rowsShow.length && i < 250; i++) {
+    let row = rowsShow[i];
+    let tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>${row.Cliente}</td>
+        <td>${row.Solicitante}</td>
+        <td>${row.RutaVenta}</td>
+        <td>${row.Placa}</td>
+        <td>${row.Asignacion}</td>
+        <td>${row.Telefono}</td>
+        <td>${row.Direccion}</td>
+    `;
+    tr.addEventListener('touchstart', ()=> tr.classList.add('resaltado'));
+    tr.addEventListener('touchend', ()=> setTimeout(()=>tr.classList.remove('resaltado'),120));
+    fragment.appendChild(tr);
+  }
+  tbody.innerHTML = '';
+  tbody.appendChild(fragment);
 }
 function match(row) {
   if (buscadorGlobal && buscadorGlobal !== '') {
@@ -173,64 +369,86 @@ window.nuevaBusqueda = function () {
   document.getElementById('buscador-principal').value = '';
   renderTable();
 };
-function renderTable() {
-  let tbody = document.querySelector('#agenda-table tbody');
-  let fragment = document.createDocumentFragment();
-  let rowsShow = dataRows.filter(row => match(row));
-  for (let i = 0; i < rowsShow.length && i < 400; i++) {
-    let row = rowsShow[i];
-    let tr = document.createElement('tr');
-    tr.innerHTML = `
-        <td>${row.Cliente}</td>
-        <td>${row.Solicitante}</td>
-        <td>${row.RutaVenta}</td>
-        <td>${row.Placa}</td>
-        <td>${row.Asignacion}</td>
-        <td>${row.Telefono}</td>
-        <td>${row.Direccion}</td>
-    `;
-    tr.addEventListener('touchstart', ()=> tr.classList.add('resaltado'));
-    tr.addEventListener('touchend', ()=> setTimeout(()=>tr.classList.remove('resaltado'),120));
-    fragment.appendChild(tr);
+document.getElementById('zonaSwitch').addEventListener('change', filtrarZonaYRender);
+window.switchTab = function(tab) {
+  document.getElementById('tab-mapa').classList.remove('active');
+  document.getElementById('tab-agenda').classList.remove('active');
+  document.getElementById('btnMapa').classList.remove('active');
+  document.getElementById('btnAgenda').classList.remove('active');
+  if(tab==='mapa'){
+    document.getElementById('tab-mapa').classList.add('active');
+    document.getElementById('btnMapa').classList.add('active');
+    if(!mapaIniciado) {
+      setTimeout(function(){
+        map = L.map('map').setView([-12.1,-77.0],12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:19,attribution:'&copy; OpenStreetMap'}
+        ).addTo(map);
+        mapaIniciado = true;
+        cargarFiltrosMapa();
+      },60);
+    } else { setTimeout(()=>{ map.invalidateSize(); }, 50);}
+  } else {
+    document.getElementById('tab-agenda').classList.add('active');
+    document.getElementById('btnAgenda').classList.add('active');
   }
-  tbody.innerHTML = '';
-  tbody.appendChild(fragment);
+};
+function cargarFiltrosMapa(){
+  const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
+  const placas = [...new Set(rawData.filter(r=>{
+    if(consideraFilter) return r[COL_CONSIDERA] === consideraFilter;
+    return r[COL_CONSIDERA] !== "0752";
+  }).map(r=>r[COL_PLACA]))];
+  document.getElementById("placa").innerHTML=placas.map((p,i)=>`<option ${i==0?"selected":""}>${p}</option>`).join('');
+  filtrarClientes(placas[0], consideraFilter);
+  filtrar();
 }
 function loadCSV() {
   Papa.parse(CSV_URL, {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
+    download: true, header: true, skipEmptyLines: true,
     complete: function (results) {
+      rawData=results.data.filter(row=>
+        row[COL_PLACA] && row[COL_CODIGO_CLIENTE] && row[COL_LAT] && row[COL_LNG]
+        && !isNaN(parseFloat(row[COL_LAT])) && !isNaN(parseFloat(row[COL_LNG]))
+      );
       const rows = results.data;
-      function safe(col, row) {
-        return row[col]!==undefined?(row[col]+''||''):'';
-      }
-      dataRows = rows.map(row => {
-        let address = safe('Address', row) || '';
-        let city    = safe('City', row) || '';
+      dataRowsRaw = rows.map(row => {
+        let E = row[COL_NOMBRE_CLIENTE]||'';
+        let F = row[COL_ERROR]||'';
+        let fullSolic = (F && !['0', '#N/A', '(blank)', '', ' '].includes(F)) ? `${E} - ${F}` : E;
+        let address = row[COL_ADDRESS]||'';
+        let city = row[COL_CITY]||'';
         let dirCity = address + (city ? ' - ' + city : '');
-        let lat = safe('Latitude', row);
-        let lng = safe('Longitude', row);
+        let lat = row[COL_LAT]||'';
+        let lng = row[COL_LNG]||'';
         let mapLink = (lat && lng) ? `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank">${dirCity}</a>` : dirCity;
+        let fecha = toDDMMYYYY(row[COL_FECHA]||'');
+        let asignacion = row['Asignación']||row['Asignacion']||'';
+        let telefono = row['Teléfono']||row['Telefono']||row['Phone']||'';
         return {
-          Cliente: safe('Customer Account # / Cliente', row),
-          Solicitante: safe('Customer Name/Solic', row),
-          RutaVenta: safe('RUTA VENTA', row) || safe('Ruta Venta', row),
-          Placa: safe('Vehicle Key/Placa', row),
-          Asignacion: safe('Asignación', row) || safe('Asignacion', row),
-          Telefono: safe('Teléfono', row) || safe('Telefono', row) || safe('Phone', row),
+          raw: row,
+          Cliente: row[COL_CODIGO_CLIENTE]||'',
+          Solicitante: fullSolic,
+          RutaVenta: row['RUTA VENTA']||row['Ruta Venta']||'',
+          Placa: row[COL_PLACA]||'',
+          Asignacion: asignacion,
+          Telefono: telefono,
           Direccion: mapLink,
-          Pedido: safe('#Pedido', row) || safe('Pedido', row)
+          FechaEntrega: fecha,
+          Pedido: row['#Pedido'] || row['Pedido'] || '',
+          Considera: row[COL_CONSIDERA]||''
         };
       });
-      renderTable();
-      // Actualiza header con fecha
-      let fecha = toDDMMYYYY(rows[0]['Fecha de Entrega'] || '');
-      document.getElementById('fecha-entrega').textContent = fecha ? "Entrega: " + fecha : '';
+      filtrarZonaYRender();
     }
   });
 }
+document.getElementById("placa").addEventListener("change", ()=>{
+  const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
+  filtrarClientes(document.getElementById("placa").value, consideraFilter);
+  filtrar();
+});
+document.getElementById("cliente").addEventListener("change", filtrar);
 document.addEventListener('DOMContentLoaded', ()=>{ loadCSV(); });
 </script>
 </body>
