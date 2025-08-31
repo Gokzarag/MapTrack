@@ -9,7 +9,6 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
-    /* Root & Base */
     :root {
       --color-primary: #0756a1;
       --color-primary-light: #1a7ed6;
@@ -21,19 +20,22 @@
       --color-border-light: #cde7f7;
       --color-text-primary: #222222;
       --color-text-secondary: #403535;
-      --color-text-muted: #5a5a5a;
       --color-success: #095c2a;
       --color-error: #b33;
       --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      --font-size-header: 0.85rem;
-      --font-size-table: 11.5px;
+      --font-size-header: 11px;
+      --font-size-table: 9.8px;
+      --font-size-body: 10.5px;
+      --font-size-small: 9px;
+      --font-size-smaller: 8.5px;
     }
     * {
       box-sizing: border-box;
     }
     body {
-      margin: 0; 
+      margin: 0;
       font-family: var(--font-family);
+      font-size: var(--font-size-body);
       background: var(--color-bg-light);
       color: var(--color-text-primary);
       -webkit-font-smoothing: antialiased;
@@ -44,117 +46,102 @@
       color: var(--color-primary);
       text-decoration: none;
       transition: color 0.2s ease;
+      font-size: inherit;
     }
     a:hover, a:focus {
       color: var(--color-primary-light);
       outline: none;
       text-decoration: underline;
     }
-
     /* Header */
     .header-row {
       position: sticky;
       top: 0;
       z-index: 1050;
-      display: flex; 
+      display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       background: #e8f3fb;
       border-bottom: 2px solid var(--color-border-light);
-      height: 48px;
-      padding: 0 12px;
+      height: 38px;
+      padding: 0 6px;
       font-size: var(--font-size-header);
       font-weight: 600;
       color: var(--color-primary);
       box-shadow: 0 2px 6px rgba(3, 91, 124, 0.12);
-      flex-wrap: nowrap;
       overflow-x: auto;
+      flex-wrap: nowrap;
       -webkit-overflow-scrolling: touch;
     }
-    .header-row::-webkit-scrollbar {
-      display: none;
-    }
+    .header-row::-webkit-scrollbar { display: none; }
     .header-logo {
-      width: 30px; 
-      height: 30px; 
+      width: 23px;
+      height: 23px;
       border-radius: 50%;
-      border: 1.5px solid var(--color-border-light);
+      border: 1px solid var(--color-border-light);
       flex-shrink: 0;
-      flex-grow: 0;
+      margin-right: 2px;
     }
     .zona-switch-row {
-      display: flex; 
-      align-items: center; 
-      gap: 6px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
       user-select: none;
       flex-shrink: 0;
       white-space: nowrap;
+      font-size: var(--font-size-header);
     }
     .zona-switch-row label[for="zonaSwitch"] {
       cursor: pointer;
-      font-weight: 600;
       font-size: var(--font-size-header);
+      font-weight: 500;
       color: var(--color-primary);
     }
     .switch {
-      position: relative; 
-      display: inline-block; 
-      width: 34px; 
-      height: 18px;
+      position: relative;
+      display: inline-block;
+      width: 24px;
+      height: 11px;
       cursor: pointer;
       flex-shrink: 0;
     }
     .switch input {
-      opacity: 0; 
-      width: 0; 
-      height: 0;
+      opacity: 0; width: 0; height: 0;
       pointer-events: none;
     }
     .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #ccc;
-      transition: .4s;
-      border-radius: 12px;
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc; transition: .4s; border-radius: 12px;
       border: 1px solid #bbb;
       box-shadow: inset 0 1px 2px rgba(255,255,255,0.6);
     }
     .slider:before {
-      position: absolute; 
-      content: "";
-      height: 14px; 
-      width: 14px; 
-      left: 2px; 
-      bottom: 2px;
-      background: white;
-      transition: .4s;
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      position: absolute; content: "";
+      height: 8px; width: 8px; left:2px; bottom:1px;
+      background: white; transition: .4s; border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.13);
     }
     input:checked + .slider {
       background-color: var(--color-primary);
       border-color: var(--color-primary-light);
       box-shadow: inset 0 1px 2px rgba(255,255,255,0.9);
     }
-    input:checked + .slider:before {
-      transform: translateX(16px);
-    }
+    input:checked + .slider:before { transform: translateX(12px);}
     #zonaIdentificador {
       font-weight: 700;
-      font-size: 0.9rem;
-      min-width: 98px;
-      margin-left: 3px;
+      font-size: var(--font-size-header);
+      min-width: 60px;
+      margin-left: 2px;
       color: var(--color-success);
       user-select: text;
-      letter-spacing: 0.02em;
-      line-height: 1.1;
+      letter-spacing: 0.01em;
+      line-height: 1.0;
       transition: color 0.3s ease;
       white-space: nowrap;
-      padding: 1px 6px;
-      border-radius: 14px;
+      padding: 1px 3px;
+      border-radius: 10px;
       background: #d0f0d9;
-      box-shadow: inset 0 0 4px rgb(9 92 42 / 0.35);
+      box-shadow: inset 0 0 2px rgb(9 92 42 / 0.30);
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -163,161 +150,139 @@
     #zonaIdentificador.inactive {
       color: var(--color-error);
       background: #fddddd;
-      box-shadow: inset 0 0 4px rgb(179 51 51 / 0.35);
+      box-shadow: inset 0 0 2px rgb(179 51 51 / 0.30);
     }
-
+    .header-spacer { flex-grow: 0; min-width: 2px;}
     .fecha-entrega {
       font-size: var(--font-size-header);
       font-weight: 700;
       color: var(--color-text-primary);
       margin-left: auto;
       user-select: none;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-      padding: 3px 12px;
+      padding: 2px 6px;
       background: #e0f0ff;
-      border-radius: 16px;
-      min-width: 84px;
+      border-radius: 10px;
+      min-width: 45px;
       text-align: center;
-      box-shadow: 0 0 8px rgba(3,91,124,0.15);
-      letter-spacing: 0.05em;
+      box-shadow: 0 0 3px rgba(3,91,124,0.10);
+      letter-spacing: 0.04em;
       font-family: monospace;
       flex-shrink: 0;
-    }
-    .header-spacer {
-      flex-grow: 0;
-      min-width: 12px;
+      white-space: nowrap;
     }
     .telegram-link {
-      display: flex; 
-      align-items: center; 
+      display: flex; align-items: center;
       text-decoration: none;
       transition: filter 0.2s ease;
       flex-shrink: 0;
-      padding: 3px;
-      border-radius: 6px;
-      outline-offset: 2px;
-      margin-left: 8px;
+      padding: 1.5px;
+      border-radius: 4px;
+      margin-left: 4px;
     }
     .telegram-link:hover,
     .telegram-link:focus {
-      filter: brightness(1.15);
-      outline: 2px solid var(--color-primary-light);
-      outline-offset: 2px;
+      filter: brightness(1.12);
+      outline: 1px solid var(--color-primary-light);
     }
     .telegram-icon {
-      width: 24px; 
-      height: 24px; 
-      margin-top: 0;
+      width: 16px;
+      height: 16px;
       display: block;
       filter: drop-shadow(0 0 1.5px #018cc7);
-      transition: filter 0.3s ease;
       flex-shrink: 0;
     }
-
     /* Main Area */
     .main-area {
-      display: flex; 
-      height: calc(100vh - 48px);
+      display: flex;
+      height: calc(100vh - 38px);
       background: var(--color-bg-light);
       overflow: hidden;
       user-select: text;
+      font-size: var(--font-size-body);
     }
     /* Tabs vertical */
     .tabs-vertical {
-      display: flex; 
-      flex-direction: column; 
-      gap: 4px;
-      min-width: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 52px;
       background: var(--color-bg-lighter);
-      border-right: 1.8px solid var(--color-border-light);
-      padding-top: 12px;
-      box-shadow: inset -1px 0 2px rgba(0,0,0,0.03);
+      border-right: 1.2px solid var(--color-border-light);
+      padding-top: 5px;
       font-family: var(--font-family);
+      font-size: var(--font-size-smaller);
     }
     .tab-btn {
-      padding: 9px 14px 9px 18px;
+      padding: 5px 8px 5px 10px;
       border: none;
-      border-radius: 10px 0 0 10px;
+      border-radius: 6px 0 0 6px;
       background: transparent;
       color: var(--color-primary);
-      font-size: 13.5px;
+      font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s ease, color 0.3s ease;
+      transition: background 0.13s, color 0.22s;
       text-align: left;
-      outline-offset: 3px;
-      box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
-      line-height: 1.3;
+      outline-offset: 2px;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+      line-height: 1.2;
     }
     .tab-btn:hover,
     .tab-btn:focus {
       background: var(--color-primary-light);
       color: white;
-      outline: none;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 0.12);
+      box-shadow: 0 1px 5px rgb(0 0 0 / 0.09);
     }
     .tab-btn.active {
       background: white;
       color: var(--color-accent);
-      border-right: 4px solid var(--color-accent);
+      border-right: 3px solid var(--color-accent);
       font-weight: 700;
-      box-shadow: none;
       cursor: default;
       user-select: none;
     }
-
-    /* Tabs content */
     .tabs-content-main {
       flex-grow: 1;
-      padding: 14px 18px 10px 24px;
+      padding: 8px 9px 7px 10px;
       background: white;
       overflow-y: auto;
-      overflow-x: hidden;
-      border-radius: 0 12px 12px 0;
-      box-shadow: inset 0 0 10px #dde7f1;
-      font-size: 13px;
-      -webkit-font-smoothing: antialiased;
+      border-radius: 0 7px 7px 0;
+      box-shadow: inset 0 0 8px #dde7f1;
+      font-size: var(--font-size-body);
     }
-    .tab-content {
-      display: none;
-      height: 100%;
-    }
-    .tab-content.active {
-      display: block;
-      height: 100%;
-    }
+    .tab-content { display: none; height: 100%;}
+    .tab-content.active { display: block; height: 100%;}
 
     /* Filters Mapa */
     .filters-mapa {
       display: flex;
-      gap: 14px;
-      margin-bottom: 14px;
+      gap: 6px;
+      margin-bottom: 7px;
       align-items: center;
       background: var(--color-bg-lighter);
-      border-radius: 10px;
-      padding: 8px 14px;
+      border-radius: 6px;
+      padding: 4px 7px;
       border: 1px solid var(--color-border-light);
       font-family: var(--font-family);
-      font-size: 12px;
+      font-size: var(--font-size-small);
       font-weight: 600;
       color: var(--color-text-secondary);
       user-select: none;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
     .filters-mapa label {
       font-weight: 700;
       color: var(--color-primary);
       user-select: none;
       white-space: nowrap;
+      font-size: var(--font-size-small);
     }
     .filters-mapa select {
-      padding: 5px 10px;
+      padding: 3px 6px;
       border: 1.5px solid #bbd7ff;
-      border-radius: 8px;
+      border-radius: 6px;
       background: var(--color-bg-input);
-      min-width: 90px;
-      font-size: 13px;
+      min-width: 60px;
+      font-size: var(--font-size-small);
       transition: border-color 0.25s ease;
       font-weight: 600;
       color: var(--color-text-primary);
@@ -326,42 +291,34 @@
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, var(--color-primary) 50%), linear-gradient(135deg, var(--color-primary) 50%, transparent 50%);
-      background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
-      background-size: 5px 5px, 5px 5px;
-      background-repeat: no-repeat;
     }
     .filters-mapa select:focus {
       border-color: var(--color-accent);
       outline: none;
     }
 
-    /* Map Container */
     #map {
       width: 100%;
-      height: 98vh;
-      max-height: 99vh;
-      border-radius: 14px;
-      border: 2px solid var(--color-border-light);
-      margin-top: 10px;
-      background: #ddebfc88;
+      height: 97vh;
+      min-height: 180px;
+      max-height: 98vh;
+      border-radius: 7px;
+      border: 1.2px solid var(--color-border-light);
+      margin-top: 7px;
+      background: #e9f6fb55;
       box-sizing: border-box;
       user-select: none;
-      box-shadow: 0 0 16px rgba(3,91,124,0.15);
-      transition: border-color 0.3s ease;
-    }
-    #map:hover,
-    #map:focus-within {
-      border-color: var(--color-accent);
+      box-shadow: 0 0 10px rgba(3,91,124,0.08);
+      font-size: var(--font-size-small);
     }
 
     /* Buscador */
     .buscador-container {
       display: flex;
       align-items: center;
-      max-width: 320px;
-      gap: 6px;
-      margin-bottom: 12px;
+      max-width: 180px;
+      gap: 3px;
+      margin-bottom: 7px;
       user-select: none;
     }
     .search-box {
@@ -369,82 +326,77 @@
       display: flex;
       align-items: center;
       background: var(--color-bg-input);
-      border: 2px solid #a4c5f9;
-      border-radius: 12px;
+      border: 1px solid #a4c5f9;
+      border-radius: 7px;
       overflow: hidden;
-      box-shadow: inset 0 0 6px #b5d2ffcc;
+      box-shadow: inset 0 0 3px #b5d2ff44;
     }
     .search-box input {
       flex-grow: 1;
-      font-size: 13px;
-      padding: 7px 12px;
+      font-size: var(--font-size-small);
+      padding: 3px 5px;
       border: none;
       outline: none;
       background: transparent;
       color: var(--color-text-primary);
-      font-weight: 600;
+      font-weight: 500;
       font-family: var(--font-family);
       user-select: text;
     }
     .search-box input::placeholder {
       color: #999;
-      font-weight: 500;
+      font-weight: 400;
+      font-size: var(--font-size-small);
     }
     .search-box button {
-      font-size: 13px;
-      padding: 7px 15px;
+      font-size: var(--font-size-small);
+      padding: 3px 6px;
       color: white;
       background: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
       border: none;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 600;
       border-left: 1px solid #d3545d;
-      border-radius: 0 12px 12px 0;
-      transition: background 0.25s ease;
-      user-select: none;
-      letter-spacing: 0.05em;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 0 7px 7px 0;
+      box-shadow: 0 2px 2px rgba(0,0,0,0.06);
     }
     .search-box button:hover,
     .search-box button:focus {
       background: linear-gradient(135deg, #f44f63, #e2414e);
       outline: none;
-      box-shadow: 0 3px 10px rgba(228,85,103,0.8);
+      box-shadow: 0 2px 6px rgba(228,85,103,0.14);
     }
-
-    /* Agenda Scroll */
+    /* Agenda Table & Scroll */
     .agenda-scroll-x {
       overflow-x: auto;
       max-width: 100%;
-      box-shadow: inset 0 0 6px #a5bde26b;
-      border-radius: 12px;
+      box-shadow: inset 0 0 2px #a5bde258;
+      border-radius: 7px;
       background: white;
       box-sizing: border-box;
       user-select: text;
     }
     table {
       border-collapse: separate;
-      border-spacing: 0 4px;
+      border-spacing: 0 2px;
       margin: 0 auto;
       width: auto;
       max-width: 100%;
       font-size: var(--font-size-table);
-      border-radius: 12px;
+      border-radius: 7px;
       background: white;
-      box-shadow: 0 3px 10px rgb(0 0 0 / 0.06);
+      box-shadow: 0 1px 5px rgb(0 0 0 / 0.06);
       user-select: text;
       table-layout: auto;
-      min-width: 320px;
+      min-width: 120px;
     }
     th, td {
       text-align: left;
-      padding: 7px 10px;
+      padding: 4px 6px;
       font-weight: 600;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
       max-width: none;
-      text-overflow: clip;
-      overflow: visible;
       vertical-align: middle;
       border: none;
     }
@@ -453,232 +405,111 @@
       color: white;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      user-select: none;
-      box-shadow: 0 2px 6px rgb(0 0 0 / 0.10);
+      letter-spacing: 0.02em;
+      border-top-left-radius: 7px;
+      border-top-right-radius: 7px;
+      font-size: var(--font-size-small);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.09);
     }
     tbody tr:hover {
       background: #ffe4e9;
-      cursor: pointer;
-      transition: background 0.25s ease;
-      user-select: none;
-      box-shadow: inset 0 0 5px #e9556780;
-      border-radius: 6px;
+      box-shadow: inset 0 0 3px #e9556780;
+      border-radius: 4px;
     }
     tr.resaltado {
       background: #fbe7e9 !important;
       font-weight: 700;
       color: var(--color-accent);
-      box-shadow: inset 0 0 8px #e9556780 !important;
-      border-radius: 6px;
+      box-shadow: inset 0 0 6px #e9556780 !important;
+      border-radius: 4px;
     }
-
     /* Responsive */
     @media (max-width: 860px) {
-      .main-area {
-        flex-direction: column;
-        height: auto;
-        overflow: visible;
-      }
-      .tabs-vertical {
-        flex-direction: row;
-        min-width: auto;
-        padding: 8px 12px 0 12px;
-        border-right: none;
-        border-bottom: 2px solid var(--color-border-light);
-        border-radius: 0 0 12px 12px;
-        gap: 10px;
-      }
-      .tab-btn {
-        border-radius: 12px 12px 0 0;
-        margin-bottom: 0;
-        margin-right: 4px;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 11px 20px 11px 20px;
-        border-right: none;
-      }
-      .tab-btn.active {
-        border-right: none;
-        border-bottom: 4px solid var(--color-accent);
-        color: var(--color-accent);
-      }
-      .tabs-content-main {
-        padding: 12px 16px 16px 16px;
-        height: auto;
-      }
-      #map {
-        height: 62vh !important;
-        margin-top: 12px;
-        border-radius: 14px;
-      }
-      .filters-mapa {
-        font-size: 11.5px;
-        padding: 7px 10px;
-        gap: 10px;
-      }
-      .filters-mapa select {
-        min-width: 80px;
-        font-size: 12px;
-        padding: 5px 9px;
-      }
-      th, td {
-        font-size: 10.5px;
-        padding: 6px 7px;
-        white-space: nowrap;
-      }
-      .buscador-container {
-        max-width: 100%;
-        margin-bottom: 10px;
-      }
-      .search-box button, .search-box input {
-        font-size: 12px;
-        padding: 5px 8px;
-      }
-      .header-row {
-        font-size: 0.78rem;
-        height: 44px;
-        padding: 0 8px;
-      }
-      .fecha-entrega {
-        min-width: 72px;
-        padding: 2px 8px;
-        font-size: 0.78rem;
-      }
-      #zonaIdentificador {
-        font-size: 0.85rem;
-        min-width: 84px;
-        padding: 1px 5px;
-      }
+      .main-area { flex-direction: column; height: auto; font-size: var(--font-size-small);}
+      .tabs-vertical { flex-direction: row; min-width: auto; font-size: var(--font-size-smaller);}
+      .tab-btn { border-radius: 6px 6px 0 0; font-size: var(--font-size-small); padding: 6px 10px;}
+      .tabs-content-main { padding: 7px 7px 7px 7px;}
+      #map { height: 60vh !important; }
     }
     @media (max-width: 480px) {
-      .tab-btn {
-        padding: 9px 14px;
-        font-size: 12px;
-      }
-      .filters-mapa {
-        flex-wrap: wrap;
-        gap: 8px;
-        font-size: 11px;
-      }
-      .filters-mapa label {
-        white-space: normal;
-      }
-      #map {
-        height: 46vh !important;
-        margin-top: 10px;
-      }
-      table {
-        font-size: 10px;
-      }
-      th, td {
-        padding: 5px 5px;
-        white-space: nowrap;
-      }
-      .buscador-container {
-        gap: 3px;
-      }
+      .tab-btn {font-size: 8px;}
+      .filters-mapa { font-size: 7.8px;}
+      #map { height: 42vh !important;}
+      table { font-size: 7.5px; }
+      th, td { padding: 2.5px 3px;}
+      .buscador-container { gap: 1.5px; }
       .search-box button, .search-box input {
-        font-size: 10px;
-        padding: 4px 7px;
+        font-size: 7.7px;
+        padding: 2.5px 5.5px;
       }
-      .header-row {
-        font-size: 0.72rem;
-        height: 40px;
-        padding: 0 6px;
-      }
-      .fecha-entrega {
-        min-width: 68px;
-        padding: 1.5px 7px;
-        font-size: 0.72rem;
-      }
-      #zonaIdentificador {
-        font-size: 0.8rem;
-        min-width: 72px;
-        padding: 1px 5px;
-      }
-      .header-logo {
-        width: 26px;
-        height: 26px;
-      }
-      .telegram-icon {
-        width: 20px;
-        height: 20px;
-      }
-      .switch {
-        width: 30px;
-        height: 16px;
-      }
-      .slider:before {
-        height: 12px;
-        width: 12px;
-        left: 2px;
-        bottom: 2px;
-      }
+      .header-row { font-size: 8px; height: 32px; padding: 0 3px;}
+      .fecha-entrega { min-width: 40px; padding: 1.4px 3.7px; font-size: 7.5px; }
+      #zonaIdentificador { font-size: 7.5px; min-width: 38px; padding: 1px 2px;}
+      .header-logo { width: 15px; height: 15px;}
+      .telegram-icon { width: 11px; height: 11px;}
+      .switch { width: 16px; height: 7px;}
+      .slider:before { height: 5px; width: 5px; left: 1.2px; bottom: 0.7px;}
     }
   </style>
 </head>
 <body>
-  <div class="header-row" role="banner" aria-label="Encabezado principal">
-    <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo MapTrack" class="header-logo" aria-hidden="true" />
-    <div class="zona-switch-row" role="group" aria-labelledby="zonaToggleLabel">
-      <label for="zonaSwitch" id="zonaToggleLabel" style="color:var(--color-primary); font-weight:600;">Zona:</label>
-      <label class="switch" aria-checked="true" role="switch" for="zonaSwitch" tabindex="0">
-        <input type="checkbox" id="zonaSwitch" checked aria-describedby="zonaIdentificador" />
+  <div class="header-row" role="banner">
+    <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" alt="Logo MapTrack" class="header-logo" />
+    <div class="zona-switch-row">
+      <label for="zonaSwitch">Zona:</label>
+      <label class="switch">
+        <input type="checkbox" id="zonaSwitch" checked />
         <span class="slider round"></span>
       </label>
-      <span id="zonaIdentificador" aria-live="polite" aria-atomic="true">Cadi Chorrillos</span>
+      <span id="zonaIdentificador">Cadi Chorrillos</span>
     </div>
-    <span class="fecha-entrega" id="fecha-entrega" aria-live="polite" aria-atomic="true" aria-label="Fecha de entrega"></span>
+    <span class="fecha-entrega" id="fecha-entrega"></span>
     <span class="header-spacer"></span>
-    <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener noreferrer" title="Abrir bot MapTrack en Telegram" class="telegram-link" aria-label="Abrir bot MapTrack en Telegram">
+    <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener noreferrer" class="telegram-link">
       <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram" class="telegram-icon" />
     </a>
   </div>
   <div class="main-area">
-    <nav class="tabs-vertical" role="tablist" aria-orientation="vertical">
-      <button class="tab-btn active" id="btnAgenda" onclick="switchTab('agenda')" role="tab" aria-selected="true" aria-controls="tab-agenda" tabindex="0">Agenda</button>
-      <button class="tab-btn" id="btnMapa" onclick="switchTab('mapa')" role="tab" aria-selected="false" aria-controls="tab-mapa" tabindex="-1">Planos</button>
+    <nav class="tabs-vertical">
+      <button class="tab-btn active" id="btnAgenda" onclick="switchTab('agenda')">Agenda</button>
+      <button class="tab-btn" id="btnMapa" onclick="switchTab('mapa')">Planos</button>
     </nav>
     <main class="tabs-content-main">
-      <section id="tab-agenda" class="tab-content active" role="tabpanel" aria-labelledby="btnAgenda" tabindex="0">
+      <section id="tab-agenda" class="tab-content active">
         <div class="buscador-container">
-          <div class="search-box" role="search" aria-label="Buscar en agenda">
-            <input type="text" id="buscador-principal" placeholder="Buscar en agenda..." oninput="onGlobalSearchInput()" aria-label="Buscar en la agenda" autocomplete="off" spellcheck="false" />
-            <button type="button" onclick="nuevaBusqueda()" aria-label="Nueva búsqueda">Nueva</button>
+          <div class="search-box">
+            <input type="text" id="buscador-principal" placeholder="Buscar en agenda..." oninput="onGlobalSearchInput()" autocomplete="off" spellcheck="false" />
+            <button type="button" onclick="nuevaBusqueda()">Nueva</button>
           </div>
         </div>
-        <div class="agenda-scroll-x" tabindex="0" aria-label="Tabla de agenda con clientes y detalles">
-          <table id="agenda-table" role="grid" aria-readonly="true" aria-describedby="tab-agenda">
+        <div class="agenda-scroll-x">
+          <table id="agenda-table">
             <thead>
               <tr>
-                <th scope="col">Cliente</th>
-                <th scope="col">Solicitante</th>
-                <th scope="col">Ruta<br>Venta</th>
-                <th scope="col">Placa</th>
-                <th scope="col">Asignación</th>
-                <th scope="col">Teléfono</th>
-                <th scope="col">Dirección</th>
+                <th>Cliente</th>
+                <th>Solicitante</th>
+                <th>Ruta<br>Venta</th>
+                <th>Placa</th>
+                <th>Asignación</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
       </section>
-      <section id="tab-mapa" class="tab-content" role="tabpanel" aria-labelledby="btnMapa" tabindex="0" aria-hidden="true">
-        <div class="filters-mapa" role="region" aria-label="Filtros del mapa de vehículos y clientes" tabindex="0">
+      <section id="tab-mapa" class="tab-content">
+        <div class="filters-mapa">
           <label for="placa">Placa:</label>
-          <select id="placa" aria-controls="map" aria-label="Filtrar por placa"></select>
+          <select id="placa"></select>
           <label for="cliente">Cliente:</label>
-          <select id="cliente" aria-controls="map" aria-label="Filtrar por cliente"></select>
+          <select id="cliente"></select>
         </div>
-        <div id="map" tabindex="0" aria-label="Mapa con ubicaciones de clientes y vehículos"></div>
+        <div id="map"></div>
       </section>
     </main>
   </div>
-
 <script>
 const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
 let rawData=[], dataRowsRaw=[], dataRows=[];
@@ -687,6 +518,9 @@ const COL_PLACA = 'Vehicle Key/Placa', COL_CODIGO_CLIENTE = 'Customer Account # 
       COL_NOMBRE_CLIENTE = 'Customer Name/Solic', COL_ERROR = 'Customer Name2',
       COL_CITY = 'City', COL_ADDRESS = 'Address', COL_FECHA = 'Fecha de Entrega',
       COL_CONSIDERA = 'Considera', COL_LAT = 'Latitude', COL_LNG = 'Longitude';
+// Geolocation marker variable for the user
+let userLocationMarker = null;
+let userLocationWatchId = null;
 
 function toDDMMYYYY(fechaStr) {
   if (!fechaStr) return '';
@@ -726,6 +560,51 @@ function makeCustomMarker(color){
   const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);
   return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
 }
+function makeBlackDotMarker() {
+  // Size: 10x10 px, centered, proportional to Leaflet's 15x21 locator
+  const size = 10;
+  const svg = encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+      <circle cx="${size/2}" cy="${size/2}" r="${size/2 - 1}" fill="black" stroke="white" stroke-width="1"/>
+    </svg>`
+  );
+  return L.icon({
+    iconUrl: "data:image/svg+xml," + svg,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],
+    popupAnchor: [0, -size/2]
+  });
+}
+function showUserLocationOnMap(enable) {
+  if (!map) return;
+  // Remove previous user marker if exists
+  if (userLocationMarker) {
+    map.removeLayer(userLocationMarker);
+    userLocationMarker = null;
+  }
+  if (userLocationWatchId !== null) {
+    navigator.geolocation.clearWatch(userLocationWatchId);
+    userLocationWatchId = null;
+  }
+  if (enable && "geolocation" in navigator) {
+    userLocationWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const {latitude, longitude} = pos.coords;
+        if (!userLocationMarker) {
+          userLocationMarker = L.marker([latitude, longitude], {
+            icon: makeBlackDotMarker(),
+            zIndexOffset: 99999
+          }).addTo(map)
+            .bindPopup('<div style="font-size:10px;">Mi ubicación actual</div>');
+        } else {
+          userLocationMarker.setLatLng([latitude, longitude]);
+        }
+      },
+      (err) => {},
+      { enableHighAccuracy:true, maximumAge:9000, timeout:10000 }
+    );
+  }
+}
 function getVisited() {
   try{ return JSON.parse(localStorage.getItem('visitedPoints_MapTrack')||'{}') }catch{return {}}
 }
@@ -754,7 +633,7 @@ function plotMarkers(data){
     const pointId=getUniqueId(row);
     const checked=visited[pointId]?"checked":"";
     const color=visited[pointId]?"#fff":colores[row[COL_NOMBRE_CLIENTE]];
-    const popup=`<div style="font-size:12px; line-height:1.3;"><a href="${gmaps}" target="_blank" rel="noopener" style="color:${colores[row[COL_NOMBRE_CLIENTE]]};font-weight:bold;">${cliente}</a><br>${row[COL_ADDRESS]} - ${row[COL_CITY]}<br><label style="font-size:0.95em; cursor:pointer;"><input type="checkbox" id="v_${pointId}" ${checked} /> Visitado</label></div>`;
+    const popup=`<div style="font-size:10px; line-height:1.25;"><a href="${gmaps}" target="_blank" rel="noopener" style="color:${colores[row[COL_NOMBRE_CLIENTE]]};font-weight:bold;">${cliente}</a><br>${row[COL_ADDRESS]} - ${row[COL_CITY]}<br><label style="font-size:0.85em; cursor:pointer;"><input type="checkbox" id="v_${pointId}" ${checked} /> Visitado</label></div>`;
     const mk=L.marker([lat,lng],{icon:makeCustomMarker(color)}).bindPopup(popup);
     mk.on("popupopen",()=>{
       const cb=document.getElementById("v_"+pointId);
@@ -892,25 +771,13 @@ window.switchTab = function(tab) {
   let tabAgenda = document.getElementById('tab-agenda');
   let btnMapa = document.getElementById('btnMapa');
   let btnAgenda = document.getElementById('btnAgenda');
-
-  tabMap.classList.remove('active');
-  tabMap.setAttribute('aria-hidden', 'true');
-  tabAgenda.classList.remove('active');
-  tabAgenda.setAttribute('aria-hidden', 'true');
-  btnMapa.classList.remove('active');
-  btnMapa.setAttribute('aria-selected', 'false');
-  btnMapa.tabIndex = -1;
-  btnAgenda.classList.remove('active');
-  btnAgenda.setAttribute('aria-selected', 'false');
-  btnAgenda.tabIndex = -1;
-
+  tabMap.classList.remove('active'); tabMap.setAttribute('aria-hidden', 'true');
+  tabAgenda.classList.remove('active'); tabAgenda.setAttribute('aria-hidden', 'true');
+  btnMapa.classList.remove('active'); btnMapa.setAttribute('aria-selected', 'false'); btnMapa.tabIndex = -1;
+  btnAgenda.classList.remove('active'); btnAgenda.setAttribute('aria-selected', 'false'); btnAgenda.tabIndex = -1;
   if(tab==='mapa'){
-    tabMap.classList.add('active');
-    tabMap.setAttribute('aria-hidden', 'false');
-    btnMapa.classList.add('active');
-    btnMapa.setAttribute('aria-selected', 'true');
-    btnMapa.tabIndex = 0;
-    tabMap.focus();
+    tabMap.classList.add('active'); tabMap.setAttribute('aria-hidden', 'false');
+    btnMapa.classList.add('active'); btnMapa.setAttribute('aria-selected', 'true'); btnMapa.tabIndex = 0; tabMap.focus();
     if(!mapaIniciado) {
       setTimeout(function(){
         map = L.map('map').setView([-12.1,-77.0],12);
@@ -919,17 +786,19 @@ window.switchTab = function(tab) {
         ).addTo(map);
         mapaIniciado = true;
         cargarFiltrosMapa();
+        showUserLocationOnMap(true); // Activar geolocalización cuando se entra por primera vez
       },60);
-    } else { setTimeout(()=>{ map.invalidateSize(); }, 100);}
+    } else {
+      setTimeout(()=>{ map.invalidateSize(); }, 100);
+      showUserLocationOnMap(true); // Reactivar geolocalización cada vez que entra
+    }
   } else {
-    tabAgenda.classList.add('active');
-    tabAgenda.setAttribute('aria-hidden', 'false');
-    btnAgenda.classList.add('active');
-    btnAgenda.setAttribute('aria-selected', 'true');
-    btnAgenda.tabIndex = 0;
-    tabAgenda.focus();
+    tabAgenda.classList.add('active'); tabAgenda.setAttribute('aria-hidden', 'false');
+    btnAgenda.classList.add('active'); btnAgenda.setAttribute('aria-selected', 'true'); btnAgenda.tabIndex = 0; tabAgenda.focus();
+    showUserLocationOnMap(false); // No mostrar geoloc fuera de mapa
   }
 };
+// Se llama tras cargar mapa o cambiar pestañas
 function cargarFiltrosMapa(){
   const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
   const placas = [...new Set(rawData.filter(r=>{
@@ -980,17 +849,14 @@ function loadCSV() {
     }
   });
 }
-
 document.getElementById("placa").addEventListener("change", ()=>{
   const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
   filtrarClientes(document.getElementById("placa").value, consideraFilter);
   filtrar();
 });
 document.getElementById("cliente").addEventListener("change", filtrar);
-
-document.addEventListener('DOMContentLoaded', ()=>{ 
-  loadCSV(); 
-});
+document.addEventListener('DOMContentLoaded', ()=>{ loadCSV(); });
 </script>
 </body>
 </html>
+
