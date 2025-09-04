@@ -449,6 +449,37 @@
       .telegram-icon { width: 11px; height: 11px;}
       .switch { width: 16px; height: 7px;}
       .slider:before { height: 5px; width: 5px; left: 1.2px; bottom: 0.7px;}
+.documentos-lista {
+  margin: 28px 0 0 4px;
+  padding: 0 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.documento-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-primary);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.13s;
+}
+.documento-link:hover,
+.documento-link:focus {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+.pdf-icon {
+  width: 19px;
+  height: 19px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 1px;
+  filter: drop-shadow(0 0 1.5px #fc3641d9);
+}
     }
   </style>
 </head>
@@ -473,6 +504,7 @@
     <nav class="tabs-vertical">
       <button class="tab-btn active" id="btnAgenda" onclick="switchTab('agenda')">Agenda</button>
       <button class="tab-btn" id="btnMapa" onclick="switchTab('mapa')">Planos</button>
+      <button class="tab-btn" id="btnDocumentos" onclick="switchTab('documentos')">Documentos</button>
     </nav>
     <main class="tabs-content-main">
       <section id="tab-agenda" class="tab-content active">
@@ -508,6 +540,20 @@
         </div>
         <div id="map"></div>
       </section>
+      <section id="tab-documentos" class="tab-content">
+  	<div class="documentos-lista">
+    	  <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
+          <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
+      SCTR Salud
+    </a>
+<br>
+<br>
+    <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
+      <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
+      SCTR Pensión
+    </a>
+  </div>
+</section>
     </main>
   </div>
 <script>
@@ -769,16 +815,20 @@ document.getElementById('zonaSwitch').addEventListener('change', filtrarZonaYRen
 window.switchTab = function(tab) {
   let tabMap = document.getElementById('tab-mapa');
   let tabAgenda = document.getElementById('tab-agenda');
+  let tabDocumentos = document.getElementById('tab-documentos');
   let btnMapa = document.getElementById('btnMapa');
   let btnAgenda = document.getElementById('btnAgenda');
-  tabMap.classList.remove('active'); tabMap.setAttribute('aria-hidden', 'true');
-  tabAgenda.classList.remove('active'); tabAgenda.setAttribute('aria-hidden', 'true');
-  btnMapa.classList.remove('active'); btnMapa.setAttribute('aria-selected', 'false'); btnMapa.tabIndex = -1;
-  btnAgenda.classList.remove('active'); btnAgenda.setAttribute('aria-selected', 'false'); btnAgenda.tabIndex = -1;
+  let btnDocumentos = document.getElementById('btnDocumentos');
+  [tabMap, tabAgenda, tabDocumentos].forEach(x => x.classList.remove('active'));
+  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.classList.remove('active'));
+  [tabMap, tabAgenda, tabDocumentos].forEach(x => x.setAttribute('aria-hidden','true'));
+  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.setAttribute('aria-selected','false'));
+  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.tabIndex=-1);
+
   if(tab==='mapa'){
-    tabMap.classList.add('active'); tabMap.setAttribute('aria-hidden', 'false');
-    btnMapa.classList.add('active'); btnMapa.setAttribute('aria-selected', 'true'); btnMapa.tabIndex = 0; tabMap.focus();
-    if(!mapaIniciado) {
+    tabMap.classList.add('active'); tabMap.setAttribute('aria-hidden','false');
+    btnMapa.classList.add('active'); btnMapa.setAttribute('aria-selected','true'); btnMapa.tabIndex=0; tabMap.focus();
+    if(typeof map==="undefined" || !mapaIniciado) {
       setTimeout(function(){
         map = L.map('map').setView([-12.1,-77.0],12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -786,16 +836,22 @@ window.switchTab = function(tab) {
         ).addTo(map);
         mapaIniciado = true;
         cargarFiltrosMapa();
-        showUserLocationOnMap(true); // Activar geolocalización cuando se entra por primera vez
+        showUserLocationOnMap(true);
       },60);
     } else {
       setTimeout(()=>{ map.invalidateSize(); }, 100);
-      showUserLocationOnMap(true); // Reactivar geolocalización cada vez que entra
+      showUserLocationOnMap(true);
     }
-  } else {
-    tabAgenda.classList.add('active'); tabAgenda.setAttribute('aria-hidden', 'false');
-    btnAgenda.classList.add('active'); btnAgenda.setAttribute('aria-selected', 'true'); btnAgenda.tabIndex = 0; tabAgenda.focus();
-    showUserLocationOnMap(false); // No mostrar geoloc fuera de mapa
+  }
+  else if(tab==='agenda'){
+    tabAgenda.classList.add('active'); tabAgenda.setAttribute('aria-hidden','false');
+    btnAgenda.classList.add('active'); btnAgenda.setAttribute('aria-selected','true'); btnAgenda.tabIndex=0; tabAgenda.focus();
+    showUserLocationOnMap(false);
+  }
+  else if(tab==='documentos'){
+    tabDocumentos.classList.add('active'); tabDocumentos.setAttribute('aria-hidden','false');
+    btnDocumentos.classList.add('active'); btnDocumentos.setAttribute('aria-selected','true'); btnDocumentos.tabIndex=0; tabDocumentos.focus();
+    showUserLocationOnMap(false);
   }
 };
 // Se llama tras cargar mapa o cambiar pestañas
@@ -859,4 +915,5 @@ document.addEventListener('DOMContentLoaded', ()=>{ loadCSV(); });
 </script>
 </body>
 </html>
+
 
