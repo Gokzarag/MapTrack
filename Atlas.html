@@ -297,7 +297,7 @@
       outline: none;
     }
 
-    #map {
+    #map, #ubicame-map {
       width: 100%;
       height: 97vh;
       min-height: 180px;
@@ -366,6 +366,77 @@
       outline: none;
       box-shadow: 0 2px 6px rgba(228,85,103,0.14);
     }
+    /* Ubicame buscador */
+    .ubicame-buscador {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 7px;
+      padding: 12px;
+      background: var(--color-bg-lighter);
+      border-radius: 8px;
+      border: 1.5px solid var(--color-border-light);
+    }
+    .ubicame-buscador label {
+      font-weight: 700;
+      color: var(--color-primary);
+      font-size: var(--font-size-small);
+      user-select: none;
+    }
+    #codigoClienteInput {
+      padding: 6px 10px;
+      border: 2px solid #bbd7ff;
+      border-radius: 6px;
+      background: var(--color-bg-input);
+      font-size: var(--font-size-small);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      font-family: var(--font-family);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      user-select: text;
+    }
+    #codigoClienteInput:focus {
+      border-color: var(--color-accent);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(233, 85, 103, 0.15);
+    }
+    #buscarClienteBtn {
+      padding: 6px 16px;
+      background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: var(--font-size-small);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    #buscarClienteBtn:hover,
+    #buscarClienteBtn:focus {
+      background: linear-gradient(135deg, #1a7ed6, #0756a1);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(7, 86, 161, 0.3);
+    }
+    #resultadoCliente {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: var(--font-size-small);
+      font-weight: 600;
+      display: none;
+    }
+    #resultadoCliente.exito {
+      background: #d4edda;
+      color: var(--color-success);
+      border: 1px solid #c3e6cb;
+    }
+    #resultadoCliente.error {
+      background: #f8d7da;
+      color: var(--color-error);
+      border: 1px solid #f5c6cb;
+    }
     /* Agenda Table & Scroll */
     .agenda-scroll-x {
       overflow-x: auto;
@@ -423,18 +494,50 @@
       box-shadow: inset 0 0 6px #e9556780 !important;
       border-radius: 4px;
     }
+    /* Documentos */
+    .documentos-lista {
+      margin: 28px 0 0 4px;
+      padding: 0 0 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .documento-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--color-primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 4px 0;
+      transition: color 0.13s;
+    }
+    .documento-link:hover,
+    .documento-link:focus {
+      color: var(--color-accent);
+      text-decoration: underline;
+    }
+    .pdf-icon {
+      width: 19px;
+      height: 19px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 1px;
+      filter: drop-shadow(0 0 1.5px #fc3641d9);
+    }
     /* Responsive */
     @media (max-width: 860px) {
       .main-area { flex-direction: column; height: auto; font-size: var(--font-size-small);}
       .tabs-vertical { flex-direction: row; min-width: auto; font-size: var(--font-size-smaller);}
       .tab-btn { border-radius: 6px 6px 0 0; font-size: var(--font-size-small); padding: 6px 10px;}
       .tabs-content-main { padding: 7px 7px 7px 7px;}
-      #map { height: 60vh !important; }
+      #map, #ubicame-map { height: 60vh !important; }
     }
     @media (max-width: 480px) {
       .tab-btn {font-size: 8px;}
       .filters-mapa { font-size: 7.8px;}
-      #map { height: 42vh !important;}
+      #map, #ubicame-map { height: 42vh !important;}
       table { font-size: 7.5px; }
       th, td { padding: 2.5px 3px;}
       .buscador-container { gap: 1.5px; }
@@ -449,37 +552,6 @@
       .telegram-icon { width: 11px; height: 11px;}
       .switch { width: 16px; height: 7px;}
       .slider:before { height: 5px; width: 5px; left: 1.2px; bottom: 0.7px;}
-.documentos-lista {
-  margin: 28px 0 0 4px;
-  padding: 0 0 0 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.documento-link {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--color-primary);
-  font-size: 11.5px;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 4px 0;
-  transition: color 0.13s;
-}
-.documento-link:hover,
-.documento-link:focus {
-  color: var(--color-accent);
-  text-decoration: underline;
-}
-.pdf-icon {
-  width: 19px;
-  height: 19px;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 1px;
-  filter: drop-shadow(0 0 1.5px #fc3641d9);
-}
     }
   </style>
 </head>
@@ -505,7 +577,7 @@
       <button class="tab-btn active" id="btnAgenda" onclick="switchTab('agenda')">Agenda</button>
       <button class="tab-btn" id="btnDocumentos" onclick="switchTab('documentos')">Documentos</button>
       <button class="tab-btn" id="btnMapa" onclick="switchTab('mapa')">Planos</button>
-      
+      <button class="tab-btn" id="btnUbicame" onclick="switchTab('ubicame')">Ubícame</button>
     </nav>
     <main class="tabs-content-main">
       <section id="tab-agenda" class="tab-content active">
@@ -542,36 +614,45 @@
         <div id="map"></div>
       </section>
       <section id="tab-documentos" class="tab-content">
-  	<div class="documentos-lista">
-    	  <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
-          <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
-      SCTR Salud
-    </a>
-<br>
-<br>
-    <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
-      <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
-      SCTR Pensión
-    </a>
-  </div>
-</section>
+        <div class="documentos-lista">
+          <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
+            <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
+            SCTR Salud
+          </a>
+          <a class="documento-link" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank">
+            <svg class="pdf-icon" viewBox="0 0 24 24" style="width:19px;height:19px;"><path fill="#e95567" d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V7l-5-5Zm.5 2h7.5V8a1 1 0 0 0 1 1H20v11.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-15A.5.5 0 0 1 6.5 2Zm8.5 2.21L18.79 8H16a.5.5 0 0 1-.5-.5Zm-9 12.04h2.74c.64 0 1.13-.13 1.47-.39.34-.26.51-.68.51-1.27 0-.53-.15-.96-.45-1.27-.31-.32-.8-.48-1.51-.48h-1.26v-1.36h2.38v-.9h-3.39v5.67Zm.94-.86V14.5h1.14c.43 0 .75.09.96.27.22.18.33.45.33.8s-.1.62-.29.81c-.19.19-.52.28-.98.28Zm5.05-2.57c-.41.23-.74.57-.95 1.02-.22.45-.33 1.03-.33 1.75 0 .69.11 1.25.33 1.7.21.44.54.79.95 1.03.42.24.91.36 1.5.36.84 0 1.5-.2 1.9-.6.41-.39.62-.95.62-1.66 0-.72-.21-1.27-.62-1.67-.4-.39-1.07-.58-1.84-.58-.56 0-1.04.12-1.45.35Zm.29 2.05c0-.5.09-.89.26-1.15.18-.27.48-.4.91-.4.43 0 .73.14.91.41.17.27.26.65.26 1.14 0 .51-.09.9-.27 1.16-.17.25-.48.38-.9.38-.44 0-.74-.13-.91-.39-.18-.26-.26-.65-.26-1.15Zm4.44-1.91v3.55h.94v-3.56h1.46v-.87h-3.87v.87Z"/></svg>
+            SCTR Pensión
+          </a>
+        </div>
+      </section>
+      <section id="tab-ubicame" class="tab-content">
+        <div class="ubicame-buscador">
+          <label for="codigoClienteInput">Código de Cliente:</label>
+          <input type="text" id="codigoClienteInput" placeholder="Ej: 123456" autocomplete="off" spellcheck="false" />
+          <button id="buscarClienteBtn" onclick="buscarClienteSigma()">🔍 Ubicar Cliente</button>
+          <div id="resultadoCliente"></div>
+        </div>
+        <div id="ubicame-map"></div>
+      </section>
     </main>
   </div>
 <script>
 const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
+const SIGMA_CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/Catalogo%20Sigma.csv';
 let rawData=[], dataRowsRaw=[], dataRows=[];
+let sigmaData = [];
 let buscadorGlobal = '';
+let ubicameMap = null;
+let ubicameMapaIniciado = false;
+let ubicameMarker = null;
 const COL_PLACA = 'Vehicle Key/Placa', COL_CODIGO_CLIENTE = 'Customer Account # / Cliente',
       COL_NOMBRE_CLIENTE = 'Customer Name/Solic', COL_ERROR = 'Customer Name2',
       COL_CITY = 'City', COL_ADDRESS = 'Address', COL_FECHA = 'Fecha de Entrega',
       COL_CONSIDERA = 'Considera', COL_LAT = 'Latitude', COL_LNG = 'Longitude';
-// Geolocation marker variable for the user
-let userLocationMarker = null;
-let userLocationWatchId = null;
 
 function toDDMMYYYY(fechaStr) {
   if (!fechaStr) return '';
-  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fechaStr.trim())) {
+  if (/^d{4}-d{1,2}-d{1,2}$/.test(fechaStr.trim())) {
     let [a,m,d]=fechaStr.trim().split('-'); return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
   }
   let sep = fechaStr.includes('/') ? '/' : '-';
@@ -580,6 +661,7 @@ function toDDMMYYYY(fechaStr) {
     return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;}
   return fechaStr;
 }
+
 function actualizarIdentificadorZona(){
   const chk = document.getElementById("zonaSwitch");
   const txt = chk.checked ? "Cadi Chorrillos" : "Cedí Ate";
@@ -593,22 +675,26 @@ function actualizarIdentificadorZona(){
     el.classList.add('inactive');
   }
 }
+
 function showEntrega(fecha) {
   document.getElementById("fecha-entrega").textContent = fecha || "";
 }
+
 let map, mapaIniciado = false, markers=[];
+
 function getColorForString(str,total) {
   let hash=0;
   for(let i=0;i<str.length;i++){ hash=str.charCodeAt(i)+((hash<<5)-hash);}
   const hue=Math.abs(hash)%total;
   return `hsl(${Math.round(hue*(360/total))},75%,49%)`;
 }
+
 function makeCustomMarker(color){
   const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);
   return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
 }
+
 function makeBlackDotMarker() {
-  // Size: 10x10 px, centered, proportional to Leaflet's 15x21 locator
   const size = 10;
   const svg = encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
@@ -622,36 +708,29 @@ function makeBlackDotMarker() {
     popupAnchor: [0, -size/2]
   });
 }
-function showUserLocationOnMap(enable) {
-  if (!map) return;
-  // Remove previous user marker if exists
-  if (userLocationMarker) {
-    map.removeLayer(userLocationMarker);
-    userLocationMarker = null;
-  }
-  if (userLocationWatchId !== null) {
-    navigator.geolocation.clearWatch(userLocationWatchId);
-    userLocationWatchId = null;
+
+function showUserLocationOnMap(enable, mapInstance = map) {
+  if (!mapInstance) return;
+  if (ubicameMarker) {
+    mapInstance.removeLayer(ubicameMarker);
+    ubicameMarker = null;
   }
   if (enable && "geolocation" in navigator) {
-    userLocationWatchId = navigator.geolocation.watchPosition(
+    navigator.geolocation.watchPosition(
       (pos) => {
         const {latitude, longitude} = pos.coords;
-        if (!userLocationMarker) {
-          userLocationMarker = L.marker([latitude, longitude], {
-            icon: makeBlackDotMarker(),
-            zIndexOffset: 99999
-          }).addTo(map)
-            .bindPopup('<div style="font-size:10px;">Mi ubicación actual</div>');
-        } else {
-          userLocationMarker.setLatLng([latitude, longitude]);
-        }
+        ubicameMarker = L.marker([latitude, longitude], {
+          icon: makeBlackDotMarker(),
+          zIndexOffset: 99999
+        }).addTo(mapInstance)
+          .bindPopup('<div style="font-size:10px;">Mi ubicación actual</div>');
       },
       (err) => {},
       { enableHighAccuracy:true, maximumAge:9000, timeout:10000 }
     );
   }
 }
+
 function getVisited() {
   try{ return JSON.parse(localStorage.getItem('visitedPoints_MapTrack')||'{}') }catch{return {}}
 }
@@ -660,6 +739,7 @@ function getUniqueId(row){ return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}`
 function uniqueBy(arr,keys){
   const seen={}; return arr.filter(row=>{ const key=keys.map(k=>row[k]).join('|'); if(seen[key]) return false; seen[key]=true; return true; });
 }
+
 function plotMarkers(data){
   markers.forEach(m=>map.removeLayer(m));
   markers=[];
@@ -705,6 +785,7 @@ function plotMarkers(data){
     }
   }, 140);
 }
+
 function filtrarClientes(placa, consideraFilter){
   const set=new Set();
   rawData.filter(r=>{
@@ -718,6 +799,7 @@ function filtrarClientes(placa, consideraFilter){
   const sel=document.getElementById("cliente");
   sel.innerHTML='<option value="">Todos</option>'+[...set].sort().map(c=>`<option>${c}</option>`).join('');
 }
+
 function filtrar(){
   const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
   let placa=document.getElementById("placa").value, cliente=document.getElementById("cliente").value;
@@ -735,6 +817,7 @@ function filtrar(){
   let fecha=data.length?toDDMMYYYY(data[0][COL_FECHA]):"";
   showEntrega(fecha);
 }
+
 function filtrarZonaYRender() {
   const zonaChecked = document.getElementById('zonaSwitch').checked;
   if(zonaChecked) {
@@ -747,6 +830,7 @@ function filtrarZonaYRender() {
   actualizarIdentificadorZona();
   if(mapaIniciado) cargarFiltrosMapa();
 }
+
 function getUnique(arr) {
   const seen = new Set();
   return arr.filter(row => {
@@ -759,6 +843,7 @@ function getUnique(arr) {
     return true;
   });
 }
+
 function mostrarFechaEntrega(rows) {
   let fechas = [...new Set(rows.map(r => r.FechaEntrega).filter(f => f))];
   fechas.sort((a, b) => {
@@ -770,6 +855,7 @@ function mostrarFechaEntrega(rows) {
   let textoFecha = fechaMostrar ? fechaMostrar : '';
   document.getElementById('fecha-entrega').textContent = textoFecha;
 }
+
 function renderTable() {
   let tbody = document.querySelector('#agenda-table tbody');
   let fragment = document.createDocumentFragment();
@@ -793,6 +879,7 @@ function renderTable() {
   tbody.innerHTML = '';
   tbody.appendChild(fragment);
 }
+
 function match(row) {
   if (buscadorGlobal && buscadorGlobal !== '') {
     let val = [
@@ -803,32 +890,126 @@ function match(row) {
   }
   return true;
 }
+
 window.onGlobalSearchInput = function () {
   buscadorGlobal = document.getElementById('buscador-principal').value.trim().toLowerCase();
   renderTable();
 };
+
 window.nuevaBusqueda = function () {
   buscadorGlobal = '';
   document.getElementById('buscador-principal').value = '';
   renderTable();
 };
+
+// NUEVA FUNCIONALIDAD UBÍCAME
+function buscarClienteSigma() {
+  const codigo = document.getElementById('codigoClienteInput').value.trim();
+  const resultadoDiv = document.getElementById('resultadoCliente');
+  
+  if (!codigo) {
+    resultadoDiv.textContent = 'Ingresa un código de cliente válido';
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    return;
+  }
+
+  // Buscar en sigmaData (columna 1: Deudor, índice 0)
+  const cliente = sigmaData.find(row => {
+    const deudor = (row[0] || '').toString().trim();
+    return deudor === codigo;
+  });
+
+  if (!cliente) {
+    resultadoDiv.textContent = `Cliente ${codigo} no encontrado en catálogo Sigma`;
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    if (ubicameMarker) {
+      ubicameMap.removeLayer(ubicameMarker);
+      ubicameMarker = null;
+    }
+    return;
+  }
+
+  // Columnas: 8=nombre (índice 7), 15=dirección (índice 14), 17=distrito (índice 16), 29=lat (índice 28), 30=lng (índice 29)
+  const nombre = cliente[7] || 'N/D';
+  const direccion = cliente[14] || 'N/D';
+  const distrito = cliente[16] || 'N/D';
+  const lat = parseFloat(cliente[28]);
+  const lng = parseFloat(cliente[29]);
+
+  if (isNaN(lat) || isNaN(lng)) {
+    resultadoDiv.textContent = `Cliente ${codigo} no tiene coordenadas válidas`;
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    return;
+  }
+
+  // Mostrar resultado exitoso
+  resultadoDiv.innerHTML = `
+    <strong>Cliente encontrado:</strong><br>
+    Código: ${codigo}<br>
+    Nombre: ${nombre}<br>
+    Dirección: ${direccion}<br>
+    Distrito: ${distrito}
+  `;
+  resultadoDiv.className = 'exito';
+  resultadoDiv.style.display = 'block';
+
+  // Mostrar en mapa
+  mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito);
+}
+
+function mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito) {
+  if (!ubicameMap) return;
+
+  // Remover marcador anterior
+  if (ubicameMarker) {
+    ubicameMap.removeLayer(ubicameMarker);
+  }
+
+  // Crear nuevo marcador con popup detallado
+  const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
+  const popupContent = `
+    <div style="font-size:11px; line-height:1.3; min-width:220px;">
+      <div style="font-weight:bold; color:#e95567; margin-bottom:4px;">📍 ${nombre}</div>
+      <div style="color:#666; margin-bottom:2px;">📍 ${direccion}</div>
+      <div style="color:#666; margin-bottom:6px;">🏛️ ${distrito}</div>
+      <a href="${gmaps}" target="_blank" rel="noopener" style="color:var(--color-primary); font-weight:600; font-size:10px;">🗺️ Abrir en Google Maps</a>
+    </div>
+  `;
+
+  ubicameMarker = L.marker([lat, lng], {
+    icon: makeCustomMarker('#e95567')
+  }).bindPopup(popupContent);
+
+  ubicameMarker.addTo(ubicameMap);
+
+  // Centrar mapa en la ubicación
+  ubicameMap.setView([lat, lng], 17);
+}
+
 document.getElementById('zonaSwitch').addEventListener('change', filtrarZonaYRender);
+
 window.switchTab = function(tab) {
   let tabMap = document.getElementById('tab-mapa');
   let tabAgenda = document.getElementById('tab-agenda');
   let tabDocumentos = document.getElementById('tab-documentos');
+  let tabUbicame = document.getElementById('tab-ubicame');
   let btnMapa = document.getElementById('btnMapa');
   let btnAgenda = document.getElementById('btnAgenda');
   let btnDocumentos = document.getElementById('btnDocumentos');
-  [tabMap, tabAgenda, tabDocumentos].forEach(x => x.classList.remove('active'));
-  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.classList.remove('active'));
-  [tabMap, tabAgenda, tabDocumentos].forEach(x => x.setAttribute('aria-hidden','true'));
-  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.setAttribute('aria-selected','false'));
-  [btnMapa, btnAgenda, btnDocumentos].forEach(x => x.tabIndex=-1);
+  let btnUbicame = document.getElementById('btnUbicame');
+  
+  [tabMap, tabAgenda, tabDocumentos, tabUbicame].forEach(x => x.classList.remove('active'));
+  [btnMapa, btnAgenda, btnDocumentos, btnUbicame].forEach(x => x.classList.remove('active'));
+  [tabMap, tabAgenda, tabDocumentos, tabUbicame].forEach(x => x.setAttribute('aria-hidden','true'));
+  [btnMapa, btnAgenda, btnDocumentos, btnUbicame].forEach(x => x.setAttribute('aria-selected','false'));
+  [btnMapa, btnAgenda, btnDocumentos, btnUbicame].forEach(x => x.tabIndex=-1);
 
   if(tab==='mapa'){
     tabMap.classList.add('active'); tabMap.setAttribute('aria-hidden','false');
-    btnMapa.classList.add('active'); btnMapa.setAttribute('aria-selected','true'); btnMapa.tabIndex=0; tabMap.focus();
+    btnMapa.classList.add('active'); btnMapa.setAttribute('aria-selected','true'); btnMapa.tabIndex=0;
     if(typeof map==="undefined" || !mapaIniciado) {
       setTimeout(function(){
         map = L.map('map').setView([-12.1,-77.0],12);
@@ -846,16 +1027,36 @@ window.switchTab = function(tab) {
   }
   else if(tab==='agenda'){
     tabAgenda.classList.add('active'); tabAgenda.setAttribute('aria-hidden','false');
-    btnAgenda.classList.add('active'); btnAgenda.setAttribute('aria-selected','true'); btnAgenda.tabIndex=0; tabAgenda.focus();
-    showUserLocationOnMap(false);
+    btnAgenda.classList.add('active'); btnAgenda.setAttribute('aria-selected','true'); btnAgenda.tabIndex=0;
+    if (map) showUserLocationOnMap(false, map);
   }
   else if(tab==='documentos'){
     tabDocumentos.classList.add('active'); tabDocumentos.setAttribute('aria-hidden','false');
-    btnDocumentos.classList.add('active'); btnDocumentos.setAttribute('aria-selected','true'); btnDocumentos.tabIndex=0; tabDocumentos.focus();
-    showUserLocationOnMap(false);
+    btnDocumentos.classList.add('active'); btnDocumentos.setAttribute('aria-selected','true'); btnDocumentos.tabIndex=0;
+    if (map) showUserLocationOnMap(false, map);
+  }
+  else if(tab==='ubicame'){
+    tabUbicame.classList.add('active'); tabUbicame.setAttribute('aria-hidden','false');
+    btnUbicame.classList.add('active'); btnUbicame.setAttribute('aria-selected','true'); btnUbicame.tabIndex=0;
+    if (map) showUserLocationOnMap(false, map);
+    
+    if (!ubicameMapaIniciado) {
+      setTimeout(function(){
+        ubicameMap = L.map('ubicame-map').setView([-12.1, -77.0], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(ubicameMap);
+        ubicameMapaIniciado = true;
+        showUserLocationOnMap(true, ubicameMap);
+      }, 60);
+    } else {
+      setTimeout(() => { ubicameMap.invalidateSize(); }, 100);
+      showUserLocationOnMap(true, ubicameMap);
+    }
   }
 };
-// Se llama tras cargar mapa o cambiar pestañas
+
 function cargarFiltrosMapa(){
   const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
   const placas = [...new Set(rawData.filter(r=>{
@@ -866,6 +1067,7 @@ function cargarFiltrosMapa(){
   filtrarClientes(placas[0], consideraFilter);
   filtrar();
 }
+
 function loadCSV() {
   Papa.parse(CSV_URL, {
     download: true, header: true, skipEmptyLines: true,
@@ -906,16 +1108,32 @@ function loadCSV() {
     }
   });
 }
+
+// Cargar catálogo Sigma
+function loadSigmaCSV() {
+  Papa.parse(SIGMA_CSV_URL, {
+    download: true, header: false, skipEmptyLines: true,
+    complete: function(results) {
+      sigmaData = results.data;
+      console.log(`Catálogo Sigma cargado: ${sigmaData.length} registros`);
+    }
+  });
+}
+
 document.getElementById("placa").addEventListener("change", ()=>{
   const consideraFilter = document.getElementById("zonaSwitch").checked ? "0752" : null;
   filtrarClientes(document.getElementById("placa").value, consideraFilter);
   filtrar();
 });
+
 document.getElementById("cliente").addEventListener("change", filtrar);
-document.addEventListener('DOMContentLoaded', ()=>{ loadCSV(); });
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadCSV();
+  loadSigmaCSV();
+});
 </script>
 </body>
 </html>
-
 
 
