@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MapTrack Atlas - Inicio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <style>
+    :root{
+      --sidebar-bg:#1f2933;
+      --sidebar-accent:#f9735b;
+      --sidebar-accent-soft:#fde3dd;
+      --sidebar-text:#f9fafb;
+      --sidebar-muted:#9ca3af;
+      --main-bg:#f4f5f7;
+      --card-bg:#ffffff;
+      --border-soft:#e5e7eb;
+      --text-main:#111827;
+      --text-muted:#6b7280;
+      --font:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:var(--font);
+      background:var(--main-bg);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+    }
+    .layout{
+      display:flex;
+      width:100%;
+      min-height:100vh;
+    }
+    /* SIDEBAR */
+    .sidebar{
+      width:235px;
+      background:linear-gradient(180deg,#111827,#1f2933);
+      color:var(--sidebar-text);
+      display:flex;
+      flex-direction:column;
+      padding:14px 14px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+    .sb-header{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:18px;
+    }
+    .sb-logo{
+      width:32px;height:32px;border-radius:50%;
+      border:1px solid rgba(249,250,251,0.3);
+      box-shadow:0 0 12px rgba(249,115,91,0.7);
+    }
+    .sb-title{
+      display:flex;
+      flex-direction:column;
+    }
+    .sb-title span:nth-child(1){
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--sidebar-muted);
+    }
+    .sb-title span:nth-child(2){
+      font-size:15px;
+      font-weight:700;
+    }
+    .sb-section-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--sidebar-muted);
+      margin:12px 0 6px;
+    }
+    .zona-toggle{
+      background:rgba(15,23,42,0.9);
+      border-radius:8px;
+      padding:8px 9px;
+      border:1px solid rgba(249,250,251,0.06);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:11.5px;
+    }
+    .zona-toggle-header{
+      display:flex;align-items:center;justify-content:space-between;
+      color:var(--sidebar-muted);
+    }
+    .zona-options{
+      display:flex;
+      gap:6px;
+    }
+    .zona-pill{
+      flex:1;
+      border-radius:999px;
+      padding:5px 6px;
+      text-align:center;
+      font-size:11px;
+      cursor:pointer;
+      border:1px solid rgba(249,250,251,0.16);
+      color:var(--sidebar-muted);
+      background:rgba(15,23,42,0.8);
+      transition:all .2s;
+    }
+    .zona-pill.active{
+      background:var(--sidebar-accent);
+      color:#111827;
+      border-color:var(--sidebar-accent-soft);
+      box-shadow:0 0 0 1px rgba(254,202,202,0.3);
+      font-weight:600;
+    }
+    .menu{
+      margin-top:10px;
+      list-style:none;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:13px;
+    }
+    .menu a{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 8px;
+      color:var(--sidebar-text);
+      text-decoration:none;
+      border-radius:7px;
+      border:1px solid transparent;
+      transition:background .18s,border-color .18s,transform .12s;
+      font-size:13px;
+    }
+    .menu a span.icon{
+      font-size:15px;width:18px;text-align:center;
+    }
+    .menu a:hover{
+      background:rgba(31,41,55,0.9);
+      border-color:rgba(249,250,251,0.08);
+      transform:translateX(1px);
+    }
+    .menu a.primary{
+      background:rgba(17,24,39,0.95);
+      border-color:rgba(249,250,251,0.14);
+    }
+    .sb-footer{
+      margin-top:auto;
+      font-size:11px;
+      color:var(--sidebar-muted);
+      border-top:1px solid rgba(55,65,81,0.9);
+      padding-top:8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .sb-footer a{
+      color:var(--sidebar-accent-soft);
+      text-decoration:none;
+      font-size:12px;
+    }
+    .sb-footer a:hover{text-decoration:underline;}
+    /* MAIN */
+    .main{
+      flex:1;
+      padding:18px 18px 18px;
+      overflow:auto;
+    }
+    .welcome-card{
+      max-width:880px;
+      margin:0 auto;
+      background:var(--card-bg);
+      border-radius:14px;
+      padding:18px 20px 20px;
+      border:1px solid var(--border-soft);
+      box-shadow:0 10px 35px rgba(15,23,42,0.12);
+    }
+    .welcome-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+    .welcome-header-left h1{
+      font-size:18px;
+      margin-bottom:4px;
+    }
+    .welcome-header-left p{
+      font-size:13px;
+      color:var(--text-muted);
+    }
+    .badge-zona{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--sidebar-accent-soft);
+      color:#7c2d12;
+      border:1px solid #fed7c2;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .grid-modulos{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:12px;
+      margin-top:8px;
+    }
+    .mod-card{
+      border-radius:10px;
+      border:1px solid var(--border-soft);
+      padding:11px 11px 12px;
+      background:linear-gradient(135deg,#ffffff,#fdf2f2);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .mod-card h2{
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .mod-card p{
+      font-size:12px;
+      color:var(--text-muted);
+    }
+    .mod-card a{
+      margin-top:4px;
+      align-self:flex-start;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--sidebar-accent);
+      color:#111827;
+      text-decoration:none;
+      font-weight:600;
+      border:1px solid rgba(248,250,252,0.8);
+    }
+    .mod-card a:hover{
+      opacity:.93;
+    }
+    @media(max-width:768px){
+      .sidebar{width:210px;}
+      .main{padding:12px;}
+      .welcome-card{padding:14px;}
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
+      <div class="sb-title">
+        <span>MapTrack Atlas</span>
+        <span>Panel Logístico</span>
+      </div>
+    </div>
+
+    <div class="sb-section-label">Oficina</div>
+    <div class="zona-toggle">
+      <div class="zona-toggle-header">
+        <span>Selecciona zona activa</span>
+      </div>
+      <div class="zona-options">
+        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedí Ate</button>
+        <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
+      </div>
+    </div>
+
+    <div class="sb-section-label">Módulos</div>
+    <ul class="menu">
+      <li><a href="index.html" class="primary"><span class="icon">🏠</span><span>Inicio</span></a></li>
+      <li><a href="agenda.html"><span class="icon">📋</span><span>Agenda</span></a></li>
+      <li><a href="planos.html"><span class="icon">🗺️</span><span>Planos</span></a></li>
+      <li><a href="ubicame.html"><span class="icon">📍</span><span>Ubícame</span></a></li>
+      <li><a href="documentos.html"><span class="icon">📑</span><span>Documentos</span></a></li>
+    </ul>
+
+    <div class="sb-footer">
+      <span>v2.1</span>
+      <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener">Telegram Bot</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="welcome-card">
+      <div class="welcome-header">
+        <div class="welcome-header-left">
+          <h1>Bienvenido a MapTrack Atlas</h1>
+          <p>Consulta tu agenda, ubica clientes en mapa y accede a documentos clave desde un solo lugar.</p>
+        </div>
+        <div>
+          <div class="badge-zona" id="badge-zona">
+            Zona activa: <strong id="badge-zona-text">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-modulos">
+        <div class="mod-card">
+          <h2>📋 Agenda diaria</h2>
+          <p>Lista filtrable de entregas por cliente, placa y ruta de venta, con fecha de entrega visible.</p>
+          <a href="agenda.html">Abrir Agenda</a>
+        </div>
+        <div class="mod-card">
+          <h2>🗺️ Planos</h2>
+          <p>Mapa interactivo con clientes geolocalizados, marcadores visitados y tu ubicación en vivo.</p>
+          <a href="planos.html">Abrir Planos</a>
+        </div>
+        <div class="mod-card">
+          <h2>📍 Ubícame</h2>
+          <p>Busca un código Sigma y visualiza al cliente en mapa con acceso directo a Google Maps.</p>
+          <a href="ubicame.html">Abrir Ubícame</a>
+        </div>
+        <div class="mod-card">
+          <h2>📑 Documentos</h2>
+          <p>Acceso rápido a SCTR y otros documentos de soporte para distribución y operaciones.</p>
+          <a href="documentos.html">Ver Documentos</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function setZona(z){
+  localStorage.setItem('maptrack_zona', z);
+  pintarZona();
+}
+function getZona(){
+  return localStorage.getItem('maptrack_zona') || '0752';
+}
+function pintarZona(){
+  const z = getZona();
+  const ate = document.getElementById('zona-ate');
+  const ch = document.getElementById('zona-chorr');
+  ate.classList.toggle('active', z !== '0752');
+  ch.classList.toggle('active', z === '0752');
+  document.getElementById('badge-zona-text').textContent =
+    z === '0752' ? 'Cadi Chorrillos' : 'Cedí Ate';
+}
+document.addEventListener('DOMContentLoaded', pintarZona);
+</script>
+</body>
+</html>
