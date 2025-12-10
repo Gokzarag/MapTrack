@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MapTrack Atlas - Ubícame</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root{
+      --sidebar-bg:#1f2933;
+      --sidebar-accent:#f9735b;
+      --sidebar-accent-soft:#fde3dd;
+      --sidebar-text:#f9fafb;
+      --sidebar-muted:#9ca3af;
+      --main-bg:#f4f5f7;
+      --card-bg:#ffffff;
+      --border-soft:#e5e7eb;
+      --text-main:#111827;
+      --text-muted:#6b7280;
+      --font:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:var(--font);
+      background:var(--main-bg);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+    }
+    .layout{
+      display:flex;
+      width:100%;
+      min-height:100vh;
+    }
+    /* SIDEBAR */
+    .sidebar{
+      width:235px;
+      background:linear-gradient(180deg,#111827,#1f2933);
+      color:var(--sidebar-text);
+      display:flex;
+      flex-direction:column;
+      padding:14px 14px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    }
+    .sb-header{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:18px;
+    }
+    .sb-logo{
+      width:32px;height:32px;border-radius:50%;
+      border:1px solid rgba(249,250,251,0.3);
+      box-shadow:0 0 12px rgba(249,115,91,0.7);
+    }
+    .sb-title{
+      display:flex;
+      flex-direction:column;
+    }
+    .sb-title span:nth-child(1){
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--sidebar-muted);
+    }
+    .sb-title span:nth-child(2){
+      font-size:15px;
+      font-weight:700;
+    }
+    .sb-section-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--sidebar-muted);
+      margin:12px 0 6px;
+    }
+    .zona-toggle{
+      background:rgba(15,23,42,0.9);
+      border-radius:8px;
+      padding:8px 9px;
+      border:1px solid rgba(249,250,251,0.06);
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:11.5px;
+    }
+    .zona-toggle-header{
+      display:flex;align-items:center;justify-content:space-between;
+      color:var(--sidebar-muted);
+    }
+    .zona-options{
+      display:flex;
+      gap:6px;
+    }
+    .zona-pill{
+      flex:1;
+      border-radius:999px;
+      padding:5px 6px;
+      text-align:center;
+      font-size:11px;
+      cursor:pointer;
+      border:1px solid rgba(249,250,251,0.16);
+      color:var(--sidebar-muted);
+      background:rgba(15,23,42,0.8);
+      transition:all .2s;
+    }
+    .zona-pill.active{
+      background:var(--sidebar-accent);
+      color:#111827;
+      border-color:var(--sidebar-accent-soft);
+      box-shadow:0 0 0 1px rgba(254,202,202,0.3);
+      font-weight:600;
+    }
+    .menu{
+      margin-top:10px;
+      list-style:none;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:13px;
+    }
+    .menu a{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 8px;
+      color:var(--sidebar-text);
+      text-decoration:none;
+      border-radius:7px;
+      border:1px solid transparent;
+      transition:background .18s,border-color .18s,transform .12s;
+      font-size:13px;
+    }
+    .menu a span.icon{
+      font-size:15px;width:18px;text-align:center;
+    }
+    .menu a:hover{
+      background:rgba(31,41,55,0.9);
+      border-color:rgba(249,250,251,0.08);
+      transform:translateX(1px);
+    }
+    .menu a.primary{
+      background:rgba(17,24,39,0.95);
+      border-color:rgba(249,250,251,0.14);
+    }
+    .sb-footer{
+      margin-top:auto;
+      font-size:11px;
+      color:var(--sidebar-muted);
+      border-top:1px solid rgba(55,65,81,0.9);
+      padding-top:8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .sb-footer a{
+      color:var(--sidebar-accent-soft);
+      text-decoration:none;
+      font-size:12px;
+    }
+    .sb-footer a:hover{text-decoration:underline;}
+    /* MAIN */
+    .main{
+      flex:1;
+      padding:14px 16px 16px;
+      overflow:auto;
+    }
+    .panel{
+      background:var(--card-bg);
+      border-radius:14px;
+      padding:10px 12px 12px;
+      border:1px solid var(--border-soft);
+      box-shadow:0 8px 28px rgba(15,23,42,0.12);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      height:calc(100vh - 32px);
+    }
+    .panel-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .panel-title h1{
+      font-size:16px;
+      margin-bottom:2px;
+    }
+    .panel-title p{
+      font-size:12px;
+      color:var(--text-muted);
+    }
+    .panel-meta{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:3px;
+      font-size:11px;
+    }
+    .badge-zona-main{
+      font-size:11px;
+      padding:3px 7px;
+      border-radius:999px;
+      background:var(--sidebar-accent-soft);
+      color:#7c2d12;
+      border:1px solid #fed7c2;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .buscador-box{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:10px 10px 10px;
+      border-radius:10px;
+      border:1px solid var(--border-soft);
+      background:#f9fafb;
+    }
+    .buscador-box label{
+      font-size:12px;
+      font-weight:600;
+      color:var(--text-muted);
+    }
+    #codigoClienteInput{
+      padding:6px 9px;
+      border-radius:7px;
+      border:1px solid #d1d5db;
+      font-size:12px;
+      width:170px;
+    }
+    #buscarClienteBtn{
+      padding:6px 12px;
+      border-radius:999px;
+      border:none;
+      background:var(--sidebar-accent);
+      color:#111827;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+      align-self:flex-start;
+    }
+    #buscarClienteBtn:hover{opacity:.9;}
+    #resultadoCliente{
+      margin-top:4px;
+      padding:8px 9px;
+      border-radius:7px;
+      font-size:12px;
+      display:none;
+    }
+    #resultadoCliente.exito{
+      background:#dcfce7;
+      color:#15803d;
+      border:1px solid #bbf7d0;
+    }
+    #resultadoCliente.error{
+      background:#fee2e2;
+      color:#b91c1c;
+      border:1px solid #fecaca;
+    }
+    .map-wrapper{
+      flex:1;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid var(--border-soft);
+      background:#e5e7eb;
+      box-shadow:inset 0 0 6px rgba(15,23,42,0.18);
+    }
+    #ubicame-map{
+      width:100%;
+      height:100%;
+      min-height:260px;
+    }
+    @media(max-width:768px){
+      .sidebar{width:210px;}
+      .main{padding:10px;}
+      .panel{height:auto;}
+      #ubicame-map{height:60vh;}
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
+      <div class="sb-title">
+        <span>MapTrack Atlas</span>
+        <span>Panel Logístico</span>
+      </div>
+    </div>
+
+    <div class="sb-section-label">Oficina</div>
+    <div class="zona-toggle">
+      <div class="zona-toggle-header">
+        <span>Selecciona zona activa</span>
+      </div>
+      <div class="zona-options">
+        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedí Ate</button>
+        <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
+      </div>
+    </div>
+
+    <div class="sb-section-label">Módulos</div>
+    <ul class="menu">
+      <li><a href="index.html"><span class="icon">🏠</span><span>Inicio</span></a></li>
+      <li><a href="agenda.html"><span class="icon">📋</span><span>Agenda</span></a></li>
+      <li><a href="planos.html"><span class="icon">🗺️</span><span>Planos</span></a></li>
+      <li><a href="ubicame.html" class="primary"><span class="icon">📍</span><span>Ubícame</span></a></li>
+      <li><a href="documentos.html"><span class="icon">📑</span><span>Documentos</span></a></li>
+    </ul>
+
+    <div class="sb-footer">
+      <span>v2.1</span>
+      <a href="https://t.me/MapTrack_bot" target="_blank" rel="noopener">Telegram Bot</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="panel">
+      <header class="panel-header">
+        <div class="panel-title">
+          <h1>Ubicar cliente Sigma</h1>
+          <p>Ingresa el código del cliente (Deudor) y visualiza su ubicación con acceso directo a Google Maps.</p>
+          <div class="buscador-box">
+            <label for="codigoClienteInput">Código de Cliente (Deudor Sigma):</label>
+            <input type="text" id="codigoClienteInput" placeholder="Ej: 123456" autocomplete="off" spellcheck="false" />
+            <button id="buscarClienteBtn" onclick="buscarClienteSigma()">🔍 Ubicar Cliente</button>
+            <div id="resultadoCliente"></div>
+          </div>
+        </div>
+        <div class="panel-meta">
+          <span class="badge-zona-main">Zona: <strong id="badge-zona-text">-</strong></span>
+        </div>
+      </header>
+
+      <div class="map-wrapper">
+        <div id="ubicame-map"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* Zona compartida */
+function setZona(z){
+  localStorage.setItem('maptrack_zona', z);
+  pintarZonaSidebar();
+}
+function getZona(){
+  return localStorage.getItem('maptrack_zona') || '0752';
+}
+function pintarZonaSidebar(){
+  const z = getZona();
+  const ate = document.getElementById('zona-ate');
+  const ch = document.getElementById('zona-chorr');
+  if (ate && ch){
+    ate.classList.toggle('active', z !== '0752');
+    ch.classList.toggle('active', z === '0752');
+  }
+  const badge = document.getElementById('badge-zona-text');
+  if (badge) badge.textContent = (z === '0752' ? 'Cadi Chorrillos' : 'Cedí Ate');
+}
+
+/* Mapa Ubícame + Sigma */
+const SIGMA_CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/Catalogo%20Sigma.csv';
+let sigmaData = [];
+let ubicameMap = null;
+let ubicameMapaIniciado = false;
+let ubicameMarker = null;
+
+function makeCustomMarker(color){
+  const svg=encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29">
+      <path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z"
+        fill="${color}" stroke="#555" stroke-width="1"/>
+    </svg>`);
+  return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
+}
+
+function makeBlackDotMarker() {
+  const size = 10;
+  const svg = encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+      <circle cx="${size/2}" cy="${size/2}" r="${size/2 - 1}" fill="black" stroke="white" stroke-width="1"/>
+    </svg>`
+  );
+  return L.icon({
+    iconUrl: "data:image/svg+xml," + svg,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],
+    popupAnchor: [0, -size/2]
+  });
+}
+
+function showUserLocationOnMap(enable, mapInstance = ubicameMap) {
+  if (!mapInstance) return;
+  if (ubicameMarker && ubicameMarker._isUser) {
+    mapInstance.removeLayer(ubicameMarker);
+    ubicameMarker = null;
+  }
+  if (enable && "geolocation" in navigator) {
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        const {latitude, longitude} = pos.coords;
+        if (ubicameMarker && ubicameMarker._isUser) {
+          mapInstance.removeLayer(ubicameMarker);
+        }
+        const mk = L.marker([latitude, longitude], {
+          icon: makeBlackDotMarker(),
+          zIndexOffset: 99999
+        }).addTo(mapInstance)
+          .bindPopup('<div style="font-size:10px;">Mi ubicación actual</div>');
+        mk._isUser = true;
+        ubicameMarker = mk;
+      },
+      (err) => {},
+      { enableHighAccuracy:true, maximumAge:9000, timeout:10000 }
+    );
+  }
+}
+
+/* Buscar en Sigma */
+function buscarClienteSigma() {
+  const codigo = document.getElementById('codigoClienteInput').value.trim();
+  const resultadoDiv = document.getElementById('resultadoCliente');
+  
+  if (!codigo) {
+    resultadoDiv.textContent = 'Ingresa un código de cliente válido';
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    return;
+  }
+
+  const cliente = sigmaData.find(row => {
+    const deudor = (row[0] || '').toString().trim();
+    return deudor === codigo;
+  });
+
+  if (!cliente) {
+    resultadoDiv.textContent = `Cliente ${codigo} no encontrado en catálogo Sigma`;
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    if (ubicameMarker && !ubicameMarker._isUser) {
+      ubicameMap.removeLayer(ubicameMarker);
+      ubicameMarker = null;
+    }
+    return;
+  }
+
+  // Columnas Sigma según tu definición
+  const nombre = cliente[7] || 'N/D';       // col 8
+  const direccion = cliente[14] || 'N/D';   // col 15
+  const distrito = cliente[16] || 'N/D';    // col 17
+  const lat = parseFloat(cliente[28]);      // col 29
+  const lng = parseFloat(cliente[29]);      // col 30
+
+  if (isNaN(lat) || isNaN(lng)) {
+    resultadoDiv.textContent = `Cliente ${codigo} no tiene coordenadas válidas`;
+    resultadoDiv.className = 'error';
+    resultadoDiv.style.display = 'block';
+    return;
+  }
+
+  resultadoDiv.innerHTML = `
+    <strong>Cliente encontrado:</strong><br>
+    Código: ${codigo}<br>
+    Nombre: ${nombre}<br>
+    Dirección: ${direccion}<br>
+    Distrito: ${distrito}
+  `;
+  resultadoDiv.className = 'exito';
+  resultadoDiv.style.display = 'block';
+
+  mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito);
+}
+
+function mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito) {
+  if (!ubicameMap) return;
+
+  if (ubicameMarker && !ubicameMarker._isUser) {
+    ubicameMap.removeLayer(ubicameMarker);
+  }
+
+  const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
+  const popupContent = `
+    <div style="font-size:11px; line-height:1.3; min-width:220px;">
+      <div style="font-weight:bold; color:#e95567; margin-bottom:4px;">📍 ${nombre}</div>
+      <div style="color:#666; margin-bottom:2px;">📍 ${direccion}</div>
+      <div style="color:#666; margin-bottom:6px;">🏛️ ${distrito}</div>
+      <a href="${gmaps}" target="_blank" rel="noopener" style="color:#075985; font-weight:600; font-size:10px;">🗺️ Abrir en Google Maps</a>
+    </div>
+  `;
+
+  const mk = L.marker([lat, lng], {
+    icon: makeCustomMarker('#e95567')
+  }).bindPopup(popupContent);
+
+  mk.addTo(ubicameMap);
+  ubicameMarker = mk;
+  ubicameMap.setView([lat, lng], 17);
+}
+
+/* Cargar Sigma */
+function loadSigmaCSV() {
+  Papa.parse(SIGMA_CSV_URL, {
+    download: true, header: false, skipEmptyLines: true,
+    complete: function(results) {
+      sigmaData = results.data;
+      // console.log('Catálogo Sigma cargado:', sigmaData.length);
+    }
+  });
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', ()=>{
+  pintarZonaSidebar();
+
+  setTimeout(function(){
+    ubicameMap = L.map('ubicame-map').setView([-12.1, -77.0], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(ubicameMap);
+    ubicameMapaIniciado = true;
+    showUserLocationOnMap(true, ubicameMap);
+  }, 60);
+
+  loadSigmaCSV();
+});
+</script>
+</body>
+</html>
