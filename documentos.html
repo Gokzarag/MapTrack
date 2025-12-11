@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MapTrack Atlas - Documentos</title>
+  <title>RoadMap - Documentos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" />
   <style>
     :root{
       --sidebar-bg:#1f2933;
@@ -280,10 +280,10 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sb-header">
-      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
+      <img src="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
       <div class="sb-title">
-        <span>MapTrack Atlas</span>
-        <span>Panel Logístico</span>
+        <span>RoadMap</span>
+        <span>Distribution Platform</span>
       </div>
     </div>
 
@@ -293,7 +293,7 @@
         <span>Selecciona zona activa</span>
       </div>
       <div class="zona-options">
-        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedí Ate</button>
+        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedi Ate</button>
         <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
       </div>
     </div>
@@ -335,8 +335,8 @@
             Cobertura de seguro complementario de trabajo de riesgo para salud.
           </div>
           <div class="doc-actions">
-            <a href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank" rel="noopener">Abrir</a>
-            <a class="secondary" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" download>Descargar</a>
+            <a href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank" rel="noopener">Abrir</a>
+            <a class="secondary" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/BRAEDT-SCTR%20SALUD.pdf" download>Descargar</a>
           </div>
         </article>
 
@@ -349,8 +349,8 @@
             Póliza de seguro complementario de trabajo de riesgo para pensión.
           </div>
           <div class="doc-actions">
-            <a href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank" rel="noopener">Abrir</a>
-            <a class="secondary" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/BRAEDT-SCTR%20SALUD.pdf" download>Descargar</a>
+            <a href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/BRAEDT-SCTR%20SALUD.pdf" target="_blank" rel="noopener">Abrir</a>
+            <a class="secondary" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/BRAEDT-SCTR%20SALUD.pdf" download>Descargar</a>
           </div>
         </article>
 
@@ -377,9 +377,10 @@ function pintarZonaSidebar(){
     ch.classList.toggle('active', z === '0752');
   }
   const badge = document.getElementById('badge-zona-text');
-  if (badge) badge.textContent = (z === '0752' ? 'Cadi Chorrillos' : 'Cedí Ate');
+  if (badge) badge.textContent = (z === '0752' ? 'Cadi Chorrillos' : 'Cedi Ate');
 }
 document.addEventListener('DOMContentLoaded', pintarZonaSidebar);
 </script>
 </body>
 </html>
+
