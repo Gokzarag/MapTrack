@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MapTrack Atlas - Ubícame</title>
+  <title>RoadMap - Ubícame</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -289,10 +289,10 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sb-header">
-      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
+      <img src="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
       <div class="sb-title">
-        <span>MapTrack Atlas</span>
-        <span>Panel Logístico</span>
+        <span>RoadMap</span>
+        <span>Distribution Platform</span>
       </div>
     </div>
 
@@ -302,7 +302,7 @@
         <span>Selecciona zona activa</span>
       </div>
       <div class="zona-options">
-        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedí Ate</button>
+        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedi Ate</button>
         <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
       </div>
     </div>
@@ -327,7 +327,7 @@
       <header class="panel-header">
         <div class="panel-title">
           <h1>Ubicar cliente Sigma</h1>
-          <p>Ingresa el código del cliente (Deudor) y visualiza su ubicación con acceso directo a Google Maps.</p>
+          <p>Ingresa el código del cliente y visualiza su ubicación con acceso directo a Google Maps.</p>
           <div class="buscador-box">
             <label for="codigoClienteInput">Código de Cliente (Deudor Sigma):</label>
             <input type="text" id="codigoClienteInput" placeholder="Ej: 123456" autocomplete="off" spellcheck="false" />
@@ -369,7 +369,7 @@ function pintarZonaSidebar(){
 }
 
 /* Mapa Ubícame + Sigma */
-const SIGMA_CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/Catalogo%20Sigma.csv';
+const SIGMA_CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/RoadMap/main/Catalogo%20Sigma.csv';
 let sigmaData = [];
 let ubicameMap = null;
 let ubicameMapaIniciado = false;
@@ -537,3 +537,4 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 </body>
 </html>
+
