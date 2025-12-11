@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>MapTrack Atlas - Planos</title>
+  <title>RoadMap - Planos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -267,10 +267,10 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sb-header">
-      <img src="https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
+      <img src="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
       <div class="sb-title">
-        <span>MapTrack Atlas</span>
-        <span>Panel Logístico</span>
+        <span>RoadMap</span>
+        <span>Distribution Platform</span>
       </div>
     </div>
 
@@ -280,7 +280,7 @@
         <span>Selecciona zona activa</span>
       </div>
       <div class="zona-options">
-        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedí Ate</button>
+        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedi Ate</button>
         <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
       </div>
     </div>
@@ -353,7 +353,7 @@ function pintarZonaSidebar(){
 }
 
 /* --- LÓGICA MAPA (adaptada de tu código) --- */
-const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/MapTrack_V2.1.csv';
+const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack_V2.1.csv';
 let rawData = [];
 let map, mapaIniciado = false, markers = [];
 let ubicameMarker = null;
@@ -603,3 +603,4 @@ document.getElementById("cliente").addEventListener("change", filtrar);
 </script>
 </body>
 </html>
+
