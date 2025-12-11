@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>RoadMap - Ubícame</title>
+  <title>RoadMap - Planos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <link rel="icon" href="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -179,7 +179,7 @@
       box-shadow:0 8px 28px rgba(15,23,42,0.12);
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
       height:calc(100vh - 32px);
     }
     .panel-header{
@@ -215,56 +215,33 @@
       align-items:center;
       gap:4px;
     }
-    .buscador-box{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      padding:9px 9px 9px;
-      border-radius:10px;
-      border:1px solid var(--border-soft);
-      background:#f9fafb;
+    .badge-fecha{
+      font-size:11px;
+      padding:3px 7px;
+      border-radius:999px;
+      background:#e5f3ff;
+      color:#1d4ed8;
+      border:1px solid #bfdbfe;
+      font-family:monospace;
     }
-    .buscador-box label{
+    .filters-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
       font-size:12px;
+    }
+    .filters-row label{
       font-weight:600;
       color:var(--text-muted);
     }
-    #codigoClienteInput{
-      padding:6px 9px;
+    .filters-row select{
+      padding:4px 7px;
       border-radius:7px;
       border:1px solid #d1d5db;
+      background:#f9fafb;
       font-size:12px;
-      width:100%;
-      max-width:220px;
-    }
-    #buscarClienteBtn{
-      padding:6px 12px;
-      border-radius:999px;
-      border:none;
-      background:var(--sidebar-accent);
-      color:#111827;
-      font-size:12px;
-      font-weight:600;
-      cursor:pointer;
-      align-self:flex-start;
-    }
-    #buscarClienteBtn:hover{opacity:.9;}
-    #resultadoCliente{
-      margin-top:4px;
-      padding:8px 9px;
-      border-radius:7px;
-      font-size:12px;
-      display:none;
-    }
-    #resultadoCliente.exito{
-      background:#dcfce7;
-      color:#15803d;
-      border:1px solid #bbf7d0;
-    }
-    #resultadoCliente.error{
-      background:#fee2e2;
-      color:#b91c1c;
-      border:1px solid #fecaca;
+      min-width:110px;
     }
     .map-wrapper{
       flex:1;
@@ -274,7 +251,7 @@
       background:#e5e7eb;
       box-shadow:inset 0 0 6px rgba(15,23,42,0.18);
     }
-    #ubicame-map{
+    #map{
       width:100%;
       height:100%;
       min-height:320px;
@@ -339,7 +316,7 @@
         height:auto;
         min-height:calc(100vh - 70px);
       }
-      #ubicame-map{
+      #map{
         min-height:55vh;
         height:55vh;
       }
@@ -365,8 +342,8 @@
     <div class="sb-header">
       <img src="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
       <div class="sb-title">
-        <span>RoadMap</span>
-        <span>Distribution Platform</span>
+        <span>MapTrack Atlas</span>
+        <span>Panel Logístico</span>
       </div>
     </div>
 
@@ -385,8 +362,8 @@
     <ul class="menu">
       <li><a href="index.html"><span class="icon">🏠</span><span>Inicio</span></a></li>
       <li><a href="agenda.html"><span class="icon">📋</span><span>Agenda</span></a></li>
-      <li><a href="planos.html"><span class="icon">🗺️</span><span>Planos</span></a></li>
-      <li><a href="ubicame.html" class="primary"><span class="icon">📍</span><span>Ubícame</span></a></li>
+      <li><a href="planos.html" class="primary"><span class="icon">🗺️</span><span>Planos</span></a></li>
+      <li><a href="ubicame.html"><span class="icon">📍</span><span>Ubícame</span></a></li>
       <li><a href="documentos.html"><span class="icon">📑</span><span>Documentos</span></a></li>
     </ul>
 
@@ -400,32 +377,38 @@
     <section class="panel">
       <header class="panel-header">
         <div class="panel-title">
-          <h1>Ubicar cliente Sigma</h1>
-          <p>Ingresa el código del cliente y visualiza su ubicación con acceso directo a Google Maps.</p>
-          <div class="buscador-box">
-            <label for="codigoClienteInput">Código de Cliente (Deudor Sigma):</label>
-            <input type="text" id="codigoClienteInput" placeholder="Ej: 123456" autocomplete="off" spellcheck="false" />
-            <button id="buscarClienteBtn" onclick="buscarClienteSigma()">🔍 Ubicar Cliente</button>
-            <div id="resultadoCliente"></div>
-          </div>
+          <h1>Planos de clientes</h1>
+          <p>Filtra por placa y cliente para ver los puntos de entrega y marcar visitas realizadas.</p>
         </div>
         <div class="panel-meta">
           <span class="badge-zona-main">Zona: <strong id="badge-zona-text">-</strong></span>
+          <span class="badge-fecha" id="fecha-entrega-badge">--/--/----</span>
         </div>
       </header>
 
+      <div class="filters-row">
+        <label for="placa">Placa:</label>
+        <select id="placa"></select>
+
+        <label for="cliente">Cliente:</label>
+        <select id="cliente"></select>
+      </div>
+
       <div class="map-wrapper">
-        <div id="ubicame-map"></div>
+        <div id="map"></div>
       </div>
     </section>
   </main>
 </div>
 
 <script>
-/* Zona compartida */
+/* Zona compartida (localStorage) */
 function setZona(z){
   localStorage.setItem('maptrack_zona', z);
   pintarZonaSidebar();
+  if (window.filtrarZonaYMapa) {
+    window.filtrarZonaYMapa();
+  }
 }
 function getZona(){
   return localStorage.getItem('maptrack_zona') || '0752';
@@ -434,28 +417,48 @@ function pintarZonaSidebar(){
   const z = getZona();
   const ate = document.getElementById('zona-ate');
   const ch = document.getElementById('zona-chorr');
-  if (ate && ch){
-    ate.classList.toggle('active', z !== '0752');
-    ch.classList.toggle('active', z === '0752');
-  }
+  if (!ate || !ch) return;
+  ate.classList.toggle('active', z !== '0752');
+  ch.classList.toggle('active', z === '0752');
   const badge = document.getElementById('badge-zona-text');
   if (badge) badge.textContent = (z === '0752' ? 'Cadi Chorrillos' : 'Cedi Ate');
 }
 
-/* Mapa Ubícame + Sigma */
-const SIGMA_CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/MapTrack/main/Catalogo%20Sigma.csv';
-let sigmaData = [];
-let ubicameMap = null;
-let ubicameMapaIniciado = false;
+/* --- LÓGICA MAPA --- */
+const CSV_URL = 'https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack_V2.1.csv';
+let rawData = [];
+let map, mapaIniciado = false, markers = [];
 let ubicameMarker = null;
 
-function makeCustomMarker(color){
-  const svg=encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29">
-      <path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z"
-        fill="${color}" stroke="#555" stroke-width="1"/>
-    </svg>`);
-  return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
+const COL_PLACA = 'Vehicle Key/Placa',
+      COL_CODIGO_CLIENTE = 'Customer Account # / Cliente',
+      COL_NOMBRE_CLIENTE = 'Customer Name/Solic',
+      COL_ERROR = 'Customer Name2',
+      COL_CITY = 'City',
+      COL_ADDRESS = 'Address',
+      COL_FECHA = 'Fecha de Entrega',
+      COL_CONSIDERA = 'Considera',
+      COL_LAT = 'Latitude',
+      COL_LNG = 'Longitude';
+
+function toDDMMYYYY(fechaStr) {
+  if (!fechaStr) return '';
+  if (/^d{4}-d{1,2}-d{1,2}$/.test(fechaStr.trim())) {
+    let [a,m,d]=fechaStr.trim().split('-');
+    return `${d.padStart(2,'0')}/${m.padStart(2,'0')}/${a}`;
+  }
+  let sep = fechaStr.includes('/') ? '/' : '-';
+  let [p1,p2,p3] = fechaStr.trim().split(sep);
+  if (p3 && p3.length===4){
+    let d=parseInt(p1),m=parseInt(p2),y=parseInt(p3);
+    if(m>12)[d,m]=[m,d];
+    return `${d.toString().padStart(2,'0')}/${m.toString().padStart(2,'0')}/${y}`;
+  }
+  return fechaStr;
+}
+
+function showEntrega(fecha) {
+  document.getElementById("fecha-entrega-badge").textContent = fecha || "--/--/----";
 }
 
 function makeBlackDotMarker() {
@@ -473,9 +476,9 @@ function makeBlackDotMarker() {
   });
 }
 
-function showUserLocationOnMap(enable, mapInstance = ubicameMap) {
+function showUserLocationOnMap(enable, mapInstance = map) {
   if (!mapInstance) return;
-  if (ubicameMarker && ubicameMarker._isUser) {
+  if (ubicameMarker) {
     mapInstance.removeLayer(ubicameMarker);
     ubicameMarker = null;
   }
@@ -483,16 +486,14 @@ function showUserLocationOnMap(enable, mapInstance = ubicameMap) {
     navigator.geolocation.watchPosition(
       (pos) => {
         const {latitude, longitude} = pos.coords;
-        if (ubicameMarker && ubicameMarker._isUser) {
+        if (ubicameMarker) {
           mapInstance.removeLayer(ubicameMarker);
         }
-        const mk = L.marker([latitude, longitude], {
+        ubicameMarker = L.marker([latitude, longitude], {
           icon: makeBlackDotMarker(),
           zIndexOffset: 99999
         }).addTo(mapInstance)
           .bindPopup('<div style="font-size:10px;">Mi ubicación actual</div>');
-        mk._isUser = true;
-        ubicameMarker = mk;
       },
       (err) => {},
       { enableHighAccuracy:true, maximumAge:9000, timeout:10000 }
@@ -500,112 +501,176 @@ function showUserLocationOnMap(enable, mapInstance = ubicameMap) {
   }
 }
 
-/* Buscar en Sigma */
-function buscarClienteSigma() {
-  const codigo = document.getElementById('codigoClienteInput').value.trim();
-  const resultadoDiv = document.getElementById('resultadoCliente');
-  
-  if (!codigo) {
-    resultadoDiv.textContent = 'Ingresa un código de cliente válido';
-    resultadoDiv.className = 'error';
-    resultadoDiv.style.display = 'block';
-    return;
-  }
+function getVisited() {
+  try{ return JSON.parse(localStorage.getItem('visitedPoints_MapTrack')||'{}') }catch{return {}}
+}
+function setVisited(obj){ localStorage.setItem('visitedPoints_MapTrack',JSON.stringify(obj)) }
+function getUniqueId(row){ return `${row[COL_PLACA]}|${row[COL_CODIGO_CLIENTE]}` }
 
-  const cliente = sigmaData.find(row => {
-    const deudor = (row[0] || '').toString().trim();
-    return deudor === codigo;
-  });
-
-  if (!cliente) {
-    resultadoDiv.textContent = `Cliente ${codigo} no encontrado en catálogo Sigma`;
-    resultadoDiv.className = 'error';
-    resultadoDiv.style.display = 'block';
-    if (ubicameMarker && !ubicameMarker._isUser) {
-      ubicameMap.removeLayer(ubicameMarker);
-      ubicameMarker = null;
-    }
-    return;
-  }
-
-  const nombre = cliente[7] || 'N/D';
-  const direccion = cliente[14] || 'N/D';
-  const distrito = cliente[16] || 'N/D';
-  const lat = parseFloat(cliente[28]);
-  const lng = parseFloat(cliente[29]);
-
-  if (isNaN(lat) || isNaN(lng)) {
-    resultadoDiv.textContent = `Cliente ${codigo} no tiene coordenadas válidas`;
-    resultadoDiv.className = 'error';
-    resultadoDiv.style.display = 'block';
-    return;
-  }
-
-  resultadoDiv.innerHTML = `
-    <strong>Cliente encontrado:</strong><br>
-    Código: ${codigo}<br>
-    Nombre: ${nombre}<br>
-    Dirección: ${direccion}<br>
-    Distrito: ${distrito}
-  `;
-  resultadoDiv.className = 'exito';
-  resultadoDiv.style.display = 'block';
-
-  mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito);
+function getColorForString(str,total) {
+  let hash=0;
+  for(let i=0;i<str.length;i++){ hash=str.charCodeAt(i)+((hash<<5)-hash);}
+  const hue=Math.abs(hash)%total;
+  return `hsl(${Math.round(hue*(360/total))},75%,49%)`;
 }
 
-function mostrarClienteEnMapa(lat, lng, nombre, direccion, distrito) {
-  if (!ubicameMap) return;
-
-  if (ubicameMarker && !ubicameMarker._isUser) {
-    ubicameMap.removeLayer(ubicameMarker);
-  }
-
-  const gmaps = `https://www.google.com/maps?q=${lat},${lng}`;
-  const popupContent = `
-    <div style="font-size:11px; line-height:1.3; min-width:220px;">
-      <div style="font-weight:bold; color:#e95567; margin-bottom:4px;">📍 ${nombre}</div>
-      <div style="color:#666; margin-bottom:2px;">📍 ${direccion}</div>
-      <div style="color:#666; margin-bottom:6px;">🏛️ ${distrito}</div>
-      <a href="${gmaps}" target="_blank" rel="noopener" style="color:#075985; font-weight:600; font-size:10px;">🗺️ Abrir en Google Maps</a>
-    </div>
-  `;
-
-  const mk = L.marker([lat, lng], {
-    icon: makeCustomMarker('#e95567')
-  }).bindPopup(popupContent);
-
-  mk.addTo(ubicameMap);
-  ubicameMarker = mk;
-  ubicameMap.setView([lat, lng], 17);
+function makeCustomMarker(color){
+  const svg=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="15" height="21" viewBox="0 0 20 29"><path d="M10 0C4.5 0 0 4.6 0 10.2 0 18.4 8.8 28.1 9.2 28.6c.4.5 1.2.5 1.6 0C11.2 28.1 20 18.4 20 10.2 20 4.6 15.5 0 10 0zm0 13.5c-2.1 0-3.7-1.7-3.7-3.7S7.9 6 10 6s3.7 1.7 3.7 3.7-1.7 3.8-3.7 3.8z" fill="${color}" stroke="#555" stroke-width="1"/></svg>`);
+  return L.icon({iconUrl:"data:image/svg+xml,"+svg,iconSize:[15,21],iconAnchor:[7.5,21],popupAnchor:[0,-16]});
 }
 
-/* Cargar Sigma */
-function loadSigmaCSV() {
-  Papa.parse(SIGMA_CSV_URL, {
-    download: true, header: false, skipEmptyLines: true,
-    complete: function(results) {
-      sigmaData = results.data;
-    }
+function uniqueBy(arr,keys){
+  const seen={};
+  return arr.filter(row=>{
+    const key=keys.map(k=>row[k]).join('|');
+    if(seen[key]) return false;
+    seen[key]=true;
+    return true;
   });
 }
 
-/* Init */
+function plotMarkers(data){
+  markers.forEach(m=>map.removeLayer(m));
+  markers=[];
+  let bounds = [];
+  const clientes=[...new Set(data.map(r=>r[COL_NOMBRE_CLIENTE]))];
+  const colores={};
+  clientes.forEach((c,i)=>{colores[c]=getColorForString(c,clientes.length+2)});
+  const visited=getVisited();
+  data.forEach(row=>{
+    const lat=parseFloat(row[COL_LAT]),lng=parseFloat(row[COL_LNG]);
+    if(!lat||!lng) return;
+    bounds.push([lat, lng]);
+    let cliente=row[COL_NOMBRE_CLIENTE];
+    const com=row[COL_ERROR];
+    if(com&&!(["","error","(blank)","(blanco)"].includes(com.trim().toLowerCase())))
+      cliente+=` (${com})`;
+    const gmaps=`https://www.google.com/maps?q=${lat},${lng}`;
+    const pointId=getUniqueId(row);
+    const checked=visited[pointId]?"checked":"";
+    const color=visited[pointId]?"#fff":colores[row[COL_NOMBRE_CLIENTE]];
+    const popup=`<div style="font-size:10px; line-height:1.25;">
+      <a href="${gmaps}" target="_blank" rel="noopener" style="color:${colores[row[COL_NOMBRE_CLIENTE]]};font-weight:bold;">${cliente}</a><br>
+      ${row[COL_ADDRESS]} - ${row[COL_CITY]}<br>
+      <label style="font-size:0.85em; cursor:pointer;"><input type="checkbox" id="v_${pointId}" ${checked} /> Visitado</label>
+    </div>`;
+    const mk=L.marker([lat,lng],{icon:makeCustomMarker(color)}).bindPopup(popup);
+    mk.on("popupopen",()=>{
+      const cb=document.getElementById("v_"+pointId);
+      if(cb) cb.addEventListener("change",()=>{
+        let v=getVisited();
+        if(cb.checked){v[pointId]=true;}else delete v[pointId];
+        setVisited(v);
+        mk.setIcon(makeCustomMarker(cb.checked?"#fff":colores[row[COL_NOMBRE_CLIENTE]]));
+      });
+    });
+    mk.addTo(map);
+    markers.push(mk);
+  });
+  setTimeout(()=>{
+    if(bounds.length > 0) {
+      if(bounds.length === 1){
+        map.setView(bounds[0], 17);
+      } else {
+        const limit = L.latLngBounds(bounds);
+        map.fitBounds(limit.pad(0.24));
+      }
+    }
+  }, 140);
+}
+
+function filtrarClientes(placa, zona){
+  const set=new Set();
+  rawData.filter(r=>{
+    if(zona === '0752'){
+      if(r[COL_CONSIDERA] !== '0752') return false;
+    } else {
+      if(r[COL_CONSIDERA] === '0752') return false;
+    }
+    return r[COL_PLACA]===placa;
+  }).forEach(r=>set.add(r[COL_NOMBRE_CLIENTE]));
+  const sel=document.getElementById("cliente");
+  sel.innerHTML='<option value="">Todos</option>'+[...set].sort().map(c=>`<option>${c}</option>`).join('');
+}
+
+function filtrar(){
+  const zona = getZona();
+  let placa=document.getElementById("placa").value,
+      cliente=document.getElementById("cliente").value;
+  let data=rawData.filter(r=>{
+    if(zona === '0752'){
+      if(r[COL_CONSIDERA] !== '0752') return false;
+    } else {
+      if(r[COL_CONSIDERA] === '0752') return false;
+    }
+    return r[COL_PLACA] === placa;
+  });
+  if(cliente) data=data.filter(r=>r[COL_NOMBRE_CLIENTE]===cliente);
+  data=uniqueBy(data,[COL_PLACA,COL_CODIGO_CLIENTE]);
+  plotMarkers(data);
+  let fecha=data.length?toDDMMYYYY(data[0][COL_FECHA]):"";
+  showEntrega(fecha);
+}
+
+function cargarFiltrosMapa(){
+  const zona = getZona();
+  const placas = [...new Set(rawData.filter(r=>{
+    if(zona === '0752') return r[COL_CONSIDERA] === '0752';
+    return r[COL_CONSIDERA] !== "0752";
+  }).map(r=>r[COL_PLACA]))];
+  const placaSel = document.getElementById("placa");
+  if (!placas.length){
+    placaSel.innerHTML = '<option value="">(Sin datos)</option>';
+    document.getElementById("cliente").innerHTML = '<option value="">Todos</option>';
+    plotMarkers([]);
+    showEntrega('');
+    return;
+  }
+  placaSel.innerHTML=placas.map((p,i)=>`<option ${i==0?"selected":""}>${p}</option>`).join('');
+  filtrarClientes(placas[0], zona);
+  filtrar();
+}
+
+function loadCSV() {
+  Papa.parse(CSV_URL, {
+    download: true, header: true, skipEmptyLines: true,
+    complete: function (results) {
+      rawData=results.data.filter(row=>
+        row[COL_PLACA] && row[COL_CODIGO_CLIENTE] && row[COL_LAT] && row[COL_LNG]
+        && !isNaN(parseFloat(row[COL_LAT])) && !isNaN(parseFloat(row[COL_LNG]))
+      );
+      cargarFiltrosMapa();
+    }
+  });
+}
+
+/* Inicialización */
 document.addEventListener('DOMContentLoaded', ()=>{
   pintarZonaSidebar();
-
   setTimeout(function(){
-    ubicameMap = L.map('ubicame-map').setView([-12.1, -77.0], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(ubicameMap);
-    ubicameMapaIniciado = true;
-    showUserLocationOnMap(true, ubicameMap);
-  }, 60);
-
-  loadSigmaCSV();
+    map = L.map('map').setView([-12.1,-77.0],12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {maxZoom:19,attribution:'&copy; OpenStreetMap'}
+    ).addTo(map);
+    mapaIniciado = true;
+    showUserLocationOnMap(true);
+  },60);
+  loadCSV();
 });
+
+/* API para setZona */
+window.filtrarZonaYMapa = function(){
+  pintarZonaSidebar();
+  cargarFiltrosMapa();
+};
+
+/* Listeners filtros */
+document.getElementById("placa").addEventListener("change", ()=>{
+  const zona = getZona();
+  filtrarClientes(document.getElementById("placa").value, zona);
+  filtrar();
+});
+document.getElementById("cliente").addEventListener("change", filtrar);
 </script>
 </body>
 </html>
