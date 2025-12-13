@@ -176,6 +176,8 @@
       padding:18px 20px 20px;
       border:1px solid var(--border-soft);
       box-shadow:0 10px 35px rgba(15,23,42,0.12);
+	rgba(15,23,42,0.12);
+	margin-bottom:18px;
     }
     .welcome-header{
       display:flex;
@@ -244,7 +246,41 @@
       opacity:.93;
     }
 
-    /* RESPONSIVO MÓVIL */
+    /* TABLAS RESUMEN KPI */
+    .kpi-table-wrapper{
+      max-height:220px;
+      overflow:auto;
+      border-radius:8px;
+      border:1px solid var(--border-soft);
+      background:#fff;
+    }
+    table.kpi-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+    table.kpi-table thead{
+      position:sticky;
+      top:0;
+      background:#f3f4f6;
+      z-index:1;
+    }
+    table.kpi-table th,
+    table.kpi-table td{
+      padding:4px 6px;
+      border-bottom:1px solid #e5e7eb;
+      text-align:left;
+      white-space:nowrap;
+    }
+    table.kpi-table th{
+      font-weight:600;
+      color:#4b5563;
+      font-size:11px;
+    }
+    table.kpi-table tbody tr:nth-child(even){
+      background:#f9fafb;
+    }
+
     @media(max-width:900px){
       .layout{
         flex-direction:column;
@@ -320,7 +356,8 @@
 </head>
 <body>
 <div class="layout">
-  <aside class="sidebar">
+
+<aside class="sidebar">
     <div class="sb-header">
       <img src="https://raw.githubusercontent.com/Gokzarag/RoadMap/main/MapTrack.png" class="sb-logo" alt="MapTrack" />
       <div class="sb-title">
@@ -335,7 +372,7 @@
         <span>Selecciona zona activa</span>
       </div>
       <div class="zona-options">
-        <button class="zona-pill" id="zona-ate" onclick="setZona('ATE')">Cedi Ate</button>
+        <button class="zona-pill" id="zona-ate" onclick="setZona('0374')">Cedi Ate</button>
         <button class="zona-pill" id="zona-chorr" onclick="setZona('0752')">Cadi Chorrillos</button>
       </div>
     </div>
@@ -392,31 +429,109 @@
         </div>
       </div>
     </div>
+
+    <!-- INDICADORES PRINCIPALES -->
+    <section class="welcome-card" id="kpi-section">
+      <div class="welcome-header">
+        <div class="welcome-header-left">
+          <h1>Indicadores principales</h1>
+          <p id="kpi-subtitle">Cargando datos de la zona seleccionada...</p>
+        </div>
+        <div>
+          <div class="badge-zona">
+            Zona activa: <strong id="badge-zona-kpi">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- tarjetas KPI (kg, clientes, unidades, etc) -->
+      <div class="grid-modulos" id="kpi-cards">
+        <!-- se llena desde kpi.js -->
+      </div>
+
+      <!-- Resumen por ciudad y ruta en TABLAS -->
+      <div style="margin-top:12px;">
+        <h2 style="font-size:14px;margin-bottom:6px;">📍 Resumen por Ciudad y Ruta</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;font-size:12px;">
+          <div>
+            <strong>Por Ciudad</strong>
+            <div class="kpi-table-wrapper" style="margin-top:4px;">
+              <table class="kpi-table" id="table-ciudad">
+                <thead>
+                  <tr>
+                    <th>Ciudad</th>
+                    <th>Kg</th>
+                    <th>Clientes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- filas desde kpi.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <strong>Por Ruta</strong>
+            <div class="kpi-table-wrapper" style="margin-top:4px;">
+              <table class="kpi-table" id="table-ruta">
+                <thead>
+                  <tr>
+                    <th>Ruta</th>
+                    <th>Kg</th>
+                    <th>Clientes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- filas desde kpi.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p id="kpi-updated" style="margin-top:6px;font-size:11px;color:#6b7280;">-</p>
+      </div>
+    </section>
   </main>
 </div>
 
 <script>
+function getZona(){
+  return localStorage.getItem('maptrack_zona') || '0752';
+}
 function setZona(z){
   localStorage.setItem('maptrack_zona', z);
   pintarZona();
-}
-function getZona(){
-  return localStorage.getItem('maptrack_zona') || '0752';
+  if (typeof loadKPI === 'function') {
+    loadKPI();
+  }
 }
 function pintarZona(){
   const z = getZona();
   const ate = document.getElementById('zona-ate');
   const ch = document.getElementById('zona-chorr');
   if (ate && ch){
-    ate.classList.toggle('active', z !== '0752');
+    ate.classList.toggle('active', z === '0374');
     ch.classList.toggle('active', z === '0752');
   }
+  const label = (z === '0752' ? 'Cadi Chorrillos' : 'Cedi Ate');
   const badge = document.getElementById('badge-zona-text');
-  if (badge) badge.textContent = (z === '0752' ? 'Cadi Chorrillos' : 'Cedi Ate');
+  const badgeKpi = document.getElementById('badge-zona-kpi');
+  if (badge) badge.textContent = label;
+  if (badgeKpi) badgeKpi.textContent = label;
 }
 document.addEventListener('DOMContentLoaded', pintarZona);
 </script>
+
+<script src="kpi.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  pintarZona();
+  if (typeof loadKPI === 'function') {
+    loadKPI();
+  }
+});
+</script>
+
 </body>
 </html>
-
 
